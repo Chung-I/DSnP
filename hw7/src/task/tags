@@ -1,0 +1,61 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+LOAD_RN	taskMgr.h	22;"	d
+NAME_LEN	taskMgr.h	21;"	d
+TASK_CMD_H	taskCmd.h	10;"	d
+TASK_MGR	taskMgr.h	10;"	d
+TaskAssignCmd	taskCmd.h	/^CmdClass(TaskAssignCmd);$/;"	v
+TaskInitCmd	taskCmd.h	/^CmdClass(TaskInitCmd);$/;"	v
+TaskMgr	taskMgr.cpp	/^TaskMgr::TaskMgr(size_t nMachines)$/;"	f	class:TaskMgr
+TaskMgr	taskMgr.h	/^class TaskMgr$/;"	c
+TaskNewCmd	taskCmd.h	/^CmdClass(TaskNewCmd);$/;"	v
+TaskNode	taskMgr.cpp	/^TaskNode::TaskNode() $/;"	f	class:TaskNode
+TaskNode	taskMgr.h	/^   TaskNode(const string& n, size_t l) : _name(n), _load(l) {}$/;"	f	class:TaskNode
+TaskNode	taskMgr.h	/^class TaskNode$/;"	c
+TaskQueryCmd	taskCmd.h	/^CmdClass(TaskQueryCmd);$/;"	v
+TaskRemoveCmd	taskCmd.h	/^CmdClass(TaskRemoveCmd);$/;"	v
+_load	taskMgr.h	/^   size_t   _load;$/;"	m	class:TaskNode
+_name	taskMgr.h	/^   string   _name;$/;"	m	class:TaskNode
+_taskHash	taskMgr.h	/^   HashSet<TaskNode>   _taskHash;$/;"	m	class:TaskMgr
+_taskHeap	taskMgr.h	/^   MinHeap<TaskNode>   _taskHeap;$/;"	m	class:TaskMgr
+add	taskMgr.cpp	/^TaskMgr::add(const string& s, size_t l)$/;"	f	class:TaskMgr
+add	taskMgr.cpp	/^TaskMgr::add(size_t nMachines)$/;"	f	class:TaskMgr
+assign	taskMgr.cpp	/^TaskMgr::assign(size_t l)$/;"	f	class:TaskMgr
+clear	taskMgr.h	/^   void clear() { _taskHeap.clear(); _taskHash.clear(); }$/;"	f	class:TaskMgr
+empty	taskMgr.h	/^   bool empty() { return size() == 0; }$/;"	f	class:TaskMgr
+exec	taskCmd.cpp	/^TaskAssignCmd::exec(const string& option)$/;"	f	class:TaskAssignCmd
+exec	taskCmd.cpp	/^TaskInitCmd::exec(const string& option)$/;"	f	class:TaskInitCmd
+exec	taskCmd.cpp	/^TaskNewCmd::exec(const string& option)$/;"	f	class:TaskNewCmd
+exec	taskCmd.cpp	/^TaskQueryCmd::exec(const string& option)$/;"	f	class:TaskQueryCmd
+exec	taskCmd.cpp	/^TaskRemoveCmd::exec(const string& option)$/;"	f	class:TaskRemoveCmd
+getLoad	taskMgr.h	/^   size_t getLoad() const { return _load; }$/;"	f	class:TaskNode
+getName	taskMgr.h	/^   const string& getName() const { return _name; }$/;"	f	class:TaskNode
+help	taskCmd.cpp	/^TaskAssignCmd::help() const$/;"	f	class:TaskAssignCmd
+help	taskCmd.cpp	/^TaskInitCmd::help() const$/;"	f	class:TaskInitCmd
+help	taskCmd.cpp	/^TaskNewCmd::help() const$/;"	f	class:TaskNewCmd
+help	taskCmd.cpp	/^TaskQueryCmd::help() const$/;"	f	class:TaskQueryCmd
+help	taskCmd.cpp	/^TaskRemoveCmd::help() const$/;"	f	class:TaskRemoveCmd
+initTaskCmd	taskCmd.cpp	/^initTaskCmd()$/;"	f
+min	taskMgr.h	/^   const TaskNode& min() const { return _taskHeap.min(); }$/;"	f	class:TaskMgr
+operator ()	taskMgr.cpp	/^TaskNode::operator () () const $/;"	f	class:TaskNode
+operator +=	taskMgr.h	/^   void operator += (size_t l) { _load += l; }$/;"	f	class:TaskNode
+operator <	taskMgr.h	/^   bool operator < (const TaskNode& n) const { return _load < n._load; }$/;"	f	class:TaskNode
+operator <<	taskMgr.cpp	/^ostream& operator << (ostream& os, const TaskNode& n)$/;"	f
+operator ==	taskMgr.h	/^   bool operator == (const TaskNode& n) const { return _name == n._name; }$/;"	f	class:TaskNode
+printAllHash	taskMgr.cpp	/^TaskMgr::printAllHash() const $/;"	f	class:TaskMgr
+printAllHeap	taskMgr.cpp	/^TaskMgr::printAllHeap() const$/;"	f	class:TaskMgr
+query	taskMgr.h	/^   bool query(TaskNode& n) { return _taskHash.query(n); }$/;"	f	class:TaskMgr
+remove	taskMgr.cpp	/^TaskMgr::remove(const string& s)$/;"	f	class:TaskMgr
+remove	taskMgr.cpp	/^TaskMgr::remove(size_t nMachines)$/;"	f	class:TaskMgr
+size	taskMgr.h	/^   size_t size() const { return _taskHeap.size(); }$/;"	f	class:TaskMgr
+usage	taskCmd.cpp	/^TaskAssignCmd::usage(ostream& os) const$/;"	f	class:TaskAssignCmd
+usage	taskCmd.cpp	/^TaskInitCmd::usage(ostream& os) const$/;"	f	class:TaskInitCmd
+usage	taskCmd.cpp	/^TaskNewCmd::usage(ostream& os) const$/;"	f	class:TaskNewCmd
+usage	taskCmd.cpp	/^TaskQueryCmd::usage(ostream& os) const$/;"	f	class:TaskQueryCmd
+usage	taskCmd.cpp	/^TaskRemoveCmd::usage(ostream& os) const$/;"	f	class:TaskRemoveCmd
+~TaskMgr	taskMgr.h	/^   ~TaskMgr() {}$/;"	f	class:TaskMgr
+~TaskNode	taskMgr.h	/^   ~TaskNode() {}$/;"	f	class:TaskNode

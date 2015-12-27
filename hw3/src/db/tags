@@ -1,0 +1,94 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+DBAppendCmd	dbCmd.h	/^CmdClass(DBAppendCmd);$/;"	v
+DBAveCmd	dbCmd.h	/^CmdClass(DBAveCmd);$/;"	v
+DBCountCmd	dbCmd.h	/^CmdClass(DBCountCmd);$/;"	v
+DBDelCmd	dbCmd.h	/^CmdClass(DBDelCmd);$/;"	v
+DBMaxCmd	dbCmd.h	/^CmdClass(DBMaxCmd);$/;"	v
+DBMinCmd	dbCmd.h	/^CmdClass(DBMinCmd);$/;"	v
+DBPrintCmd	dbCmd.h	/^CmdClass(DBPrintCmd);$/;"	v
+DBReadCmd	dbCmd.h	/^CmdClass(DBReadCmd);$/;"	v
+DBRow	dbTable.h	/^   DBRow() {}$/;"	f	class:DBRow
+DBRow	dbTable.h	/^   DBRow(const vector<int>& d) : _data(d) {}$/;"	f	class:DBRow
+DBRow	dbTable.h	/^class DBRow$/;"	c
+DBSort	dbTable.h	/^struct DBSort$/;"	s
+DBSortCmd	dbCmd.h	/^CmdClass(DBSortCmd);$/;"	v
+DBSumCmd	dbCmd.h	/^CmdClass(DBSumCmd);$/;"	v
+DBTable	dbTable.h	/^class DBTable$/;"	c
+DB_CMD_H	dbCmd.h	9;"	d
+DB_TABLE_H	dbTable.h	9;"	d
+_data	dbTable.h	/^   vector<int>   _data;$/;"	m	class:DBRow
+_sortOrder	dbTable.h	/^   vector<size_t> _sortOrder;$/;"	m	struct:DBSort
+_table	dbTable.h	/^   vector<DBRow>    _table;$/;"	m	class:DBTable
+addCol	dbTable.cpp	/^DBTable::addCol(const vector<int>& d)$/;"	f	class:DBTable
+addData	dbTable.h	/^   void addData(int i) { \/* TODO *\/_data.push_back(i);  }$/;"	f	class:DBRow
+addRow	dbTable.h	/^   void addRow(const DBRow& r) { _table.push_back(r); }$/;"	f	class:DBTable
+checkColIdx	dbCmd.cpp	/^static bool checkColIdx(const string& token, int& c)$/;"	f	file:
+checkRowIdx	dbCmd.cpp	/^static bool checkRowIdx(const string& token, int& c)$/;"	f	file:
+countNonNullData	dbTable.cpp	/^int DBTable::countNonNullData()$/;"	f	class:DBTable
+dbtbl	dbCmd.cpp	/^DBTable dbtbl;$/;"	v
+delCol	dbTable.cpp	/^DBTable::delCol(int c)$/;"	f	class:DBTable
+delRow	dbTable.cpp	/^DBTable::delRow(int c)$/;"	f	class:DBTable
+empty	dbTable.h	/^   bool empty() const { return _data.empty(); }$/;"	f	class:DBRow
+exec	dbCmd.cpp	/^DBAppendCmd::exec(const string& option)$/;"	f	class:DBAppendCmd
+exec	dbCmd.cpp	/^DBAveCmd::exec(const string& option)$/;"	f	class:DBAveCmd
+exec	dbCmd.cpp	/^DBCountCmd::exec(const string& option)$/;"	f	class:DBCountCmd
+exec	dbCmd.cpp	/^DBDelCmd::exec(const string& option)$/;"	f	class:DBDelCmd
+exec	dbCmd.cpp	/^DBMaxCmd::exec(const string& option)$/;"	f	class:DBMaxCmd
+exec	dbCmd.cpp	/^DBMinCmd::exec(const string& option)$/;"	f	class:DBMinCmd
+exec	dbCmd.cpp	/^DBPrintCmd::exec(const string& option)$/;"	f	class:DBPrintCmd
+exec	dbCmd.cpp	/^DBReadCmd::exec(const string& option)$/;"	f	class:DBReadCmd
+exec	dbCmd.cpp	/^DBSortCmd::exec(const string& option)$/;"	f	class:DBSortCmd
+exec	dbCmd.cpp	/^DBSumCmd::exec(const string& option)$/;"	f	class:DBSumCmd
+getAve	dbTable.cpp	/^DBTable::getAve(size_t c) const$/;"	f	class:DBTable
+getCount	dbTable.cpp	/^DBTable::getCount(size_t c) const$/;"	f	class:DBTable
+getData	dbTable.h	/^   int getData(size_t r, size_t c) const { return _table[r][c]; }$/;"	f	class:DBTable
+getMax	dbTable.cpp	/^DBTable::getMax(size_t c) const$/;"	f	class:DBTable
+getMin	dbTable.cpp	/^DBTable::getMin(size_t c) const$/;"	f	class:DBTable
+getSum	dbTable.cpp	/^DBTable::getSum(size_t c) const$/;"	f	class:DBTable
+help	dbCmd.cpp	/^DBAppendCmd::help() const$/;"	f	class:DBAppendCmd
+help	dbCmd.cpp	/^DBAveCmd::help() const$/;"	f	class:DBAveCmd
+help	dbCmd.cpp	/^DBCountCmd::help() const$/;"	f	class:DBCountCmd
+help	dbCmd.cpp	/^DBDelCmd::help() const$/;"	f	class:DBDelCmd
+help	dbCmd.cpp	/^DBMaxCmd::help() const$/;"	f	class:DBMaxCmd
+help	dbCmd.cpp	/^DBMinCmd::help() const$/;"	f	class:DBMinCmd
+help	dbCmd.cpp	/^DBPrintCmd::help() const$/;"	f	class:DBPrintCmd
+help	dbCmd.cpp	/^DBReadCmd::help() const$/;"	f	class:DBReadCmd
+help	dbCmd.cpp	/^DBSortCmd::help() const$/;"	f	class:DBSortCmd
+help	dbCmd.cpp	/^DBSumCmd::help() const$/;"	f	class:DBSumCmd
+initDbCmd	dbCmd.cpp	/^initDbCmd()$/;"	f
+nCols	dbTable.h	/^   size_t nCols() const { \/* TODO *\/return _table[0].size(); }$/;"	f	class:DBTable
+nRows	dbTable.h	/^   size_t nRows() const { return _table.size(); }$/;"	f	class:DBTable
+operator !	dbTable.h	/^   bool operator !() { return _table.empty(); }$/;"	f	class:DBTable
+operator ()	dbTable.cpp	/^DBSort::operator() (const DBRow& r1, const DBRow& r2) const$/;"	f	class:DBSort
+operator <<	dbTable.cpp	/^ostream& operator << (ostream& os, const DBRow& r)$/;"	f
+operator <<	dbTable.cpp	/^ostream& operator << (ostream& os, const DBTable& t)$/;"	f
+operator >>	dbTable.cpp	/^ifstream& operator >> (ifstream& ifs, DBTable& t)$/;"	f
+operator []	dbTable.h	/^   const DBRow& operator [] (size_t i) const { return _table[i]; }$/;"	f	class:DBTable
+operator []	dbTable.h	/^   const int& operator [] (size_t i) const { return _data[i]; }$/;"	f	class:DBRow
+operator []	dbTable.h	/^   int& operator [] (size_t i) { return _data[i]; }$/;"	f	class:DBRow
+operator void*	dbTable.h	/^   operator void* () const { return _table.empty()? NULL: (void*)this; }$/;"	f	class:DBTable
+parsingCsv	dbTable.cpp	/^DBTable::parsingCsv(string& csvString)$/;"	f	class:DBTable
+printCol	dbTable.cpp	/^DBTable::printCol(size_t c) const$/;"	f	class:DBTable
+printData	dbTable.h	/^   static void printData(ostream& os, int i, bool printNull = false) {$/;"	f	class:DBTable
+printSummary	dbTable.cpp	/^DBTable::printSummary() const$/;"	f	class:DBTable
+pushOrder	dbTable.h	/^   void pushOrder(size_t i) { _sortOrder.push_back(i); }$/;"	f	struct:DBSort
+removeCell	dbTable.cpp	/^DBRow::removeCell(size_t c)$/;"	f	class:DBRow
+reset	dbTable.cpp	/^DBTable::reset()$/;"	f	class:DBTable
+reset	dbTable.h	/^   void reset() { vector<int> tmp; tmp.swap(_data); }$/;"	f	class:DBRow
+size	dbTable.h	/^   size_t size() const { return _data.size(); }$/;"	f	class:DBRow
+sort	dbTable.cpp	/^DBTable::sort(const struct DBSort& s)$/;"	f	class:DBTable
+usage	dbCmd.cpp	/^DBAppendCmd::usage(ostream& os) const$/;"	f	class:DBAppendCmd
+usage	dbCmd.cpp	/^DBAveCmd::usage(ostream& os) const$/;"	f	class:DBAveCmd
+usage	dbCmd.cpp	/^DBCountCmd::usage(ostream& os) const$/;"	f	class:DBCountCmd
+usage	dbCmd.cpp	/^DBDelCmd::usage(ostream& os) const$/;"	f	class:DBDelCmd
+usage	dbCmd.cpp	/^DBMaxCmd::usage(ostream& os) const$/;"	f	class:DBMaxCmd
+usage	dbCmd.cpp	/^DBMinCmd::usage(ostream& os) const$/;"	f	class:DBMinCmd
+usage	dbCmd.cpp	/^DBPrintCmd::usage(ostream& os) const$/;"	f	class:DBPrintCmd
+usage	dbCmd.cpp	/^DBReadCmd::usage(ostream& os) const$/;"	f	class:DBReadCmd
+usage	dbCmd.cpp	/^DBSortCmd::usage(ostream& os) const$/;"	f	class:DBSortCmd
+usage	dbCmd.cpp	/^DBSumCmd::usage(ostream& os) const$/;"	f	class:DBSumCmd

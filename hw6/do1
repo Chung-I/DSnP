@@ -1,0 +1,3 @@
+cirr tests.fraig/sim15.aag
+cirg 200 -fani 20
+q -f

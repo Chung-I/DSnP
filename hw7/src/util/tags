@@ -1,0 +1,81 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+HashSet	myHashSet.h	/^   HashSet(size_t b = 0) : _numBuckets(0), _buckets(0) { if (b != 0) init(b); }$/;"	f	class:HashSet
+HashSet	myHashSet.h	/^class HashSet$/;"	c
+MYCLK_TCK	myUsage.h	21;"	d
+MYCLK_TCK	myUsage.h	22;"	d
+MY_HASH_SET_H	myHashSet.h	10;"	d
+MY_MIN_HEAP_H	myMinHeap.h	10;"	d
+MY_USAGE_H	myUsage.h	10;"	d
+MinHeap	myMinHeap.h	/^   MinHeap(size_t s = 0) { if (s != 0) _data.reserve(s); }$/;"	f	class:MinHeap
+MinHeap	myMinHeap.h	/^class MinHeap$/;"	c
+MyUsage	myUsage.h	/^   MyUsage() { reset(); }$/;"	f	class:MyUsage
+MyUsage	myUsage.h	/^class MyUsage$/;"	c
+RN_GEN_H	rnGen.h	9;"	d
+RandomNumGen	rnGen.h	/^      RandomNumGen() { my_srandom(getpid()); }$/;"	f	class:RandomNumGen
+RandomNumGen	rnGen.h	/^      RandomNumGen(unsigned seed) { my_srandom(seed); }$/;"	f	class:RandomNumGen
+RandomNumGen	rnGen.h	/^class RandomNumGen$/;"	c
+UTIL_H	util.h	9;"	d
+_buckets	myHashSet.h	/^   vector<Data>*     _buckets;$/;"	m	class:HashSet
+_currentMem	myUsage.h	/^   double     _currentMem;$/;"	m	class:MyUsage
+_currentTick	myUsage.h	/^   double     _currentTick;$/;"	m	class:MyUsage
+_data	myMinHeap.h	/^   vector<Data>   _data;$/;"	m	class:MinHeap
+_initMem	myUsage.h	/^   double     _initMem;$/;"	m	class:MyUsage
+_numBuckets	myHashSet.h	/^   size_t            _numBuckets;$/;"	m	class:HashSet
+_periodUsedTime	myUsage.h	/^   double     _periodUsedTime;$/;"	m	class:MyUsage
+_totalUsedTime	myUsage.h	/^   double     _totalUsedTime;$/;"	m	class:MyUsage
+begin	myHashSet.h	/^   iterator begin() const { return iterator(); }$/;"	f	class:HashSet
+bucketNum	myHashSet.h	/^   size_t bucketNum(const Data& d) const {$/;"	f	class:HashSet
+check	myHashSet.h	/^   bool check(const Data& d) const { return false; }$/;"	f	class:HashSet
+checkMem	myUsage.h	/^   double checkMem() const {$/;"	f	class:MyUsage
+checkTick	myUsage.h	/^   double checkTick() const {$/;"	f	class:MyUsage
+clear	myHashSet.h	/^   void clear() {$/;"	f	class:HashSet
+clear	myMinHeap.h	/^   void clear() { _data.clear(); }$/;"	f	class:MinHeap
+clearList	util.h	/^void clearList(T& l)$/;"	f
+delData	myMinHeap.h	/^   void delData(size_t i) { $/;"	f	class:MinHeap
+delMin	myMinHeap.h	/^   void delMin() { $/;"	f	class:MinHeap
+empty	myHashSet.h	/^   bool empty() const { return true; }$/;"	f	class:HashSet
+end	myHashSet.h	/^   iterator end() const { return iterator(); }$/;"	f	class:HashSet
+getHashSize	util.cpp	/^size_t getHashSize(size_t s) {$/;"	f
+init	myHashSet.h	/^   void init(size_t b) { _numBuckets = b; _buckets = new vector<Data>[b]; }$/;"	f	class:HashSet
+insert	myHashSet.h	/^   bool insert(const Data& d) { return true; }$/;"	f	class:HashSet
+insert	myMinHeap.h	/^   void insert(const Data& d) { $/;"	f	class:MinHeap
+isValidVarName	myString.cpp	/^isValidVarName(const string& str)$/;"	f
+iterator	myHashSet.h	/^      iterator() {};$/;"	f	class:HashSet::iterator
+iterator	myHashSet.h	/^   class iterator$/;"	c	class:HashSet
+min	myMinHeap.h	/^   const Data& min() const { return Data(); }$/;"	f	class:MinHeap
+myGetChar	myGetChar.cpp	/^char myGetChar()$/;"	f
+myGetChar	myGetChar.cpp	/^char myGetChar(istream& istr)$/;"	f
+myStr2Int	myString.cpp	/^myStr2Int(const string& str, int& num)$/;"	f
+myStrGetTok	myString.cpp	/^myStrGetTok(const string& str, string& tok, size_t pos = 0,$/;"	f
+myStrNCmp	myString.cpp	/^myStrNCmp(const string& s1, const string& s2, unsigned n)$/;"	f
+myUsage	util.cpp	/^MyUsage       myUsage;$/;"	v
+my_random	rnGen.h	17;"	d
+my_srandom	rnGen.h	16;"	d
+numBuckets	myHashSet.h	/^   size_t numBuckets() const { return _numBuckets; }$/;"	f	class:HashSet
+operator ()	rnGen.h	/^      const int operator() (const int range) const {$/;"	f	class:RandomNumGen
+operator []	myHashSet.h	/^   const vector<Data>& operator [](size_t i) const { return _buckets[i]; }$/;"	f	class:HashSet
+operator []	myHashSet.h	/^   vector<Data>& operator [] (size_t i) { return _buckets[i]; }$/;"	f	class:HashSet
+operator []	myMinHeap.h	/^   Data& operator [] (size_t i) { return _data[i]; }$/;"	f	class:MinHeap
+operator []	myMinHeap.h	/^   const Data& operator [] (size_t i) const { return _data[i]; }   $/;"	f	class:MinHeap
+query	myHashSet.h	/^   bool query(Data& d) const { return false; }$/;"	f	class:HashSet
+remove	myHashSet.h	/^   bool remove(const Data& d) { return false; }$/;"	f	class:HashSet
+removeData	util.h	/^void removeData(T& l, const D& d)$/;"	f
+report	myUsage.h	/^   void report(bool repTime, bool repMem) {$/;"	f	class:MyUsage
+reset	myHashSet.h	/^   void reset() {$/;"	f	class:HashSet
+reset	myUsage.h	/^   void reset() {$/;"	f	class:MyUsage
+reset_keypress	myGetChar.cpp	/^static void reset_keypress(void)$/;"	f	file:
+setMemUsage	myUsage.h	/^   void setMemUsage() { _currentMem = checkMem() - _initMem; }$/;"	f	class:MyUsage
+setTimeUsage	myUsage.h	/^   void setTimeUsage() {$/;"	f	class:MyUsage
+set_keypress	myGetChar.cpp	/^static void set_keypress(void)$/;"	f	file:
+size	myHashSet.h	/^   size_t size() const { size_t s = 0; return s; }$/;"	f	class:HashSet
+size	myMinHeap.h	/^   size_t size() const { return _data.size(); }$/;"	f	class:MinHeap
+stored_settings	myGetChar.cpp	/^static struct termios stored_settings;$/;"	v	typeref:struct:termios	file:
+update	myHashSet.h	/^   bool update(const Data& d) { return false; }$/;"	f	class:HashSet
+~HashSet	myHashSet.h	/^   ~HashSet() { reset(); }$/;"	f	class:HashSet
+~MinHeap	myMinHeap.h	/^   ~MinHeap() {}$/;"	f	class:MinHeap
+~iterator	myHashSet.h	/^      ~iterator() {};$/;"	f	class:HashSet::iterator

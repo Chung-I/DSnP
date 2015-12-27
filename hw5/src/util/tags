@@ -1,0 +1,172 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ARRAY_H	array.h	10;"	d
+Array	array.h	/^   Array() : _data(0), _size(0), _capacity(0) {}$/;"	f	class:Array
+Array	array.h	/^class Array$/;"	c
+BST_H	bst.h	10;"	d
+BSTree	bst.h	/^   BSTree(): _root(0) {}$/;"	f	class:BSTree
+BSTree	bst.h	/^class BSTree$/;"	c
+BSTreeNode	bst.h	/^   BSTreeNode(const T& d, BSTreeNode<T>* l = 0, BSTreeNode<T>* r = 0):$/;"	f	class:BSTreeNode
+BSTreeNode	bst.h	/^class BSTreeNode$/;"	c
+DLIST_H	dlist.h	10;"	d
+DList	dlist.h	/^   DList() {$/;"	f	class:DList
+DList	dlist.h	/^class DList$/;"	c
+DListNode	dlist.h	/^   DListNode(const T& d, DListNode<T>* p = 0, DListNode<T>* n = 0):$/;"	f	class:DListNode
+DListNode	dlist.h	/^class DListNode$/;"	c
+LEFT	bst.h	17;"	d
+MYCLK_TCK	myUsage.h	21;"	d
+MYCLK_TCK	myUsage.h	22;"	d
+MY_USAGE_H	myUsage.h	10;"	d
+MyUsage	myUsage.h	/^   MyUsage() { reset(); }$/;"	f	class:MyUsage
+MyUsage	myUsage.h	/^class MyUsage$/;"	c
+RIGHT	bst.h	18;"	d
+RN_GEN_H	rnGen.h	9;"	d
+RandomNumGen	rnGen.h	/^      RandomNumGen() { my_srandom(getpid()); }$/;"	f	class:RandomNumGen
+RandomNumGen	rnGen.h	/^      RandomNumGen(unsigned seed) { my_srandom(seed); }$/;"	f	class:RandomNumGen
+RandomNumGen	rnGen.h	/^class RandomNumGen$/;"	c
+UTIL_H	util.h	9;"	d
+_capacity	array.h	/^   size_t       _capacity;   \/\/ max number of elements$/;"	m	class:Array
+_currentMem	myUsage.h	/^   double     _currentMem;$/;"	m	class:MyUsage
+_currentTick	myUsage.h	/^   double     _currentTick;$/;"	m	class:MyUsage
+_data	array.h	/^   T*           _data;$/;"	m	class:Array
+_data	bst.h	/^   T   _data;$/;"	m	class:BSTreeNode
+_data	dlist.h	/^   T              _data;$/;"	m	class:DListNode
+_direction	bst.h	/^         int _direction;$/;"	m	class:BSTree::iterator::oneTrace
+_head	dlist.h	/^   DListNode<T>*  _head;  \/\/ = dummy node if list is empty$/;"	m	class:DList
+_initMem	myUsage.h	/^   double     _initMem;$/;"	m	class:MyUsage
+_left	bst.h	/^   BSTreeNode<T>*   _left;$/;"	m	class:BSTreeNode
+_next	dlist.h	/^   DListNode<T>*  _next;$/;"	m	class:DListNode
+_node	array.h	/^      T*    _node;$/;"	m	class:Array::iterator
+_node	bst.h	/^      BSTreeNode<T>*   _node;$/;"	m	class:BSTree::iterator
+_node	dlist.h	/^      DListNode<T>* _node;$/;"	m	class:DList::iterator
+_periodUsedTime	myUsage.h	/^   double     _periodUsedTime;$/;"	m	class:MyUsage
+_prev	dlist.h	/^   DListNode<T>*  _prev;$/;"	m	class:DListNode
+_right	bst.h	/^   BSTreeNode<T>*   _right;$/;"	m	class:BSTreeNode
+_root	bst.h	/^   BSTreeNode<T>*   _root;$/;"	m	class:BSTree
+_size	array.h	/^   size_t       _size;       \/\/ number of valid elements$/;"	m	class:Array
+_totalUsedTime	myUsage.h	/^   double     _totalUsedTime;$/;"	m	class:MyUsage
+_trace	bst.h	/^      vector<oneTrace*> _trace;$/;"	m	class:BSTree::iterator
+_traceNode	bst.h	/^         BSTreeNode<T>* _traceNode;$/;"	m	class:BSTree::iterator::oneTrace
+backToParent	bst.h	/^      int backToParent () { \/\/return 0 if no parent(root); return 1 if left child itself; return 2 if right child itself$/;"	f	class:BSTree::iterator
+begin	array.h	/^   iterator begin() const { $/;"	f	class:Array
+begin	bst.h	/^   iterator begin() const {$/;"	f	class:BSTree
+begin	dlist.h	/^   iterator begin() const { $/;"	f	class:DList
+checkMem	myUsage.h	/^   double checkMem() const {$/;"	f	class:MyUsage
+checkTick	myUsage.h	/^   double checkTick() const {$/;"	f	class:MyUsage
+clear	array.h	/^   void clear() {$/;"	f	class:Array
+clear	bst.h	/^   void clear() { clearNode(_root);}$/;"	f	class:BSTree
+clear	dlist.h	/^   void clear() { $/;"	f	class:DList
+clearNode	bst.h	/^   void clearNode(BSTreeNode<T>* deleteNode) {$/;"	f	class:BSTree
+countChild	bst.h	/^      int countChild() const {$/;"	f	class:BSTree::iterator
+countSize	bst.h	/^   void countSize(BSTreeNode<T>* countNode, size_t size) {$/;"	f	class:BSTree
+empty	array.h	/^   bool empty() const { return !(_size); }$/;"	f	class:Array
+empty	bst.h	/^   bool empty() const {$/;"	f	class:BSTree
+empty	dlist.h	/^   bool empty() const { $/;"	f	class:DList
+end	array.h	/^   iterator end() const { $/;"	f	class:Array
+end	bst.h	/^   iterator end() const {$/;"	f	class:BSTree
+end	dlist.h	/^   iterator end() const { return iterator(_head); }$/;"	f	class:DList
+erase	array.h	/^   bool erase(const T& x) { $/;"	f	class:Array
+erase	array.h	/^   bool erase(iterator pos) { $/;"	f	class:Array
+erase	bst.h	/^   bool erase(const T& x) {$/;"	f	class:BSTree
+erase	bst.h	/^   bool erase(iterator pos) {$/;"	f	class:BSTree
+erase	dlist.h	/^   bool erase(const T& x) { $/;"	f	class:DList
+erase	dlist.h	/^   bool erase(iterator pos) { $/;"	f	class:DList
+eraseNode	bst.h	/^   void eraseNode(iterator& eraser) {$/;"	f	class:BSTree
+getChild	bst.h	/^      BSTreeNode<T>*& getChild (int direc) {$/;"	f	class:BSTree::iterator
+getParent	bst.h	/^      BSTreeNode<T>* getParent() const {$/;"	f	class:BSTree::iterator
+getRoot	bst.h	/^   const BSTreeNode<T>* getRoot() const {$/;"	f	class:BSTree
+insert	bst.h	/^   void insert(const T& x) {$/;"	f	class:BSTree
+isValidVarName	myString.cpp	/^isValidVarName(const string& str)$/;"	f
+iterator	array.h	/^      iterator(T* n= 0): _node(n) {}$/;"	f	class:Array::iterator
+iterator	array.h	/^      iterator(const iterator& i): _node(i._node) {}$/;"	f	class:Array::iterator
+iterator	array.h	/^   class iterator$/;"	c	class:Array
+iterator	bst.h	/^      iterator(BSTreeNode<T>* node): _node(node) {}$/;"	f	class:BSTree::iterator
+iterator	bst.h	/^      iterator(const iterator& i): _node(i._node) {}$/;"	f	class:BSTree::iterator
+iterator	bst.h	/^   class iterator { $/;"	c	class:BSTree
+iterator	dlist.h	/^      iterator(DListNode<T>* n= 0): _node(n) {}$/;"	f	class:DList::iterator
+iterator	dlist.h	/^      iterator(const iterator& i) : _node(i._node) {}$/;"	f	class:DList::iterator
+iterator	dlist.h	/^   class iterator$/;"	c	class:DList
+moveToChild	bst.h	/^      void moveToChild (int direc) {$/;"	f	class:BSTree::iterator
+myGetChar	myGetChar.cpp	/^char myGetChar()$/;"	f
+myGetChar	myGetChar.cpp	/^char myGetChar(istream& istr)$/;"	f
+myMemcpy	array.h	/^   void myMemcpy(T* newLoc,T* oldLoc) { for(int i = 0; i < (int)_size; i++)   *(newLoc+i) = *(oldLoc + i); }$/;"	f	class:Array
+myStr2Int	myString.cpp	/^myStr2Int(const string& str, int& num)$/;"	f
+myStrGetTok	myString.cpp	/^myStrGetTok(const string& str, string& tok, size_t pos = 0,$/;"	f
+myStrNCmp	myString.cpp	/^myStrNCmp(const string& s1, const string& s2, unsigned n)$/;"	f
+myUsage	util.cpp	/^MyUsage       myUsage;$/;"	v
+my_random	rnGen.h	17;"	d
+my_srandom	rnGen.h	16;"	d
+oneTrace	bst.h	/^         oneTrace(BSTreeNode<T>* node, int direc):$/;"	f	class:BSTree::iterator::oneTrace
+oneTrace	bst.h	/^      class oneTrace$/;"	c	class:BSTree::iterator
+operator !=	array.h	/^      bool operator != (const iterator& i) const { $/;"	f	class:Array::iterator
+operator !=	bst.h	/^      bool operator != (const iterator& i) const {$/;"	f	class:BSTree::iterator
+operator !=	dlist.h	/^      bool operator != (const iterator& i) const { $/;"	f	class:DList::iterator
+operator ()	rnGen.h	/^      const int operator() (const int range) const {$/;"	f	class:RandomNumGen
+operator *	array.h	/^      T& operator * () { return (*_node); }$/;"	f	class:Array::iterator
+operator *	array.h	/^      const T& operator * () const { $/;"	f	class:Array::iterator
+operator *	bst.h	/^      T& operator * () { return _node -> _data; }$/;"	f	class:BSTree::iterator
+operator *	bst.h	/^      const T& operator * () const {$/;"	f	class:BSTree::iterator
+operator *	dlist.h	/^      T& operator * () { return _node->_data; }$/;"	f	class:DList::iterator
+operator *	dlist.h	/^      const T& operator * () const { $/;"	f	class:DList::iterator
+operator +	array.h	/^      iterator operator + (int i) const { return iterator(_node + i); }$/;"	f	class:Array::iterator
+operator ++	array.h	/^      iterator operator ++ (int) { $/;"	f	class:Array::iterator
+operator ++	array.h	/^      iterator& operator ++ () { $/;"	f	class:Array::iterator
+operator ++	bst.h	/^      iterator operator ++ (int) {$/;"	f	class:BSTree::iterator
+operator ++	bst.h	/^      iterator& operator ++ () {$/;"	f	class:BSTree::iterator
+operator ++	dlist.h	/^      iterator operator ++ (int) { $/;"	f	class:DList::iterator
+operator ++	dlist.h	/^      iterator& operator ++ () { $/;"	f	class:DList::iterator
+operator +=	array.h	/^      iterator& operator += (int i) { _node = _node + i; return (*this); }$/;"	f	class:Array::iterator
+operator --	array.h	/^      iterator operator -- (int) {$/;"	f	class:Array::iterator
+operator --	array.h	/^      iterator& operator -- () { $/;"	f	class:Array::iterator
+operator --	bst.h	/^      iterator operator -- (int) {$/;"	f	class:BSTree::iterator
+operator --	bst.h	/^      iterator& operator -- () {$/;"	f	class:BSTree::iterator
+operator --	dlist.h	/^      iterator operator -- (int) { $/;"	f	class:DList::iterator
+operator --	dlist.h	/^      iterator& operator -- () { $/;"	f	class:DList::iterator
+operator =	array.h	/^      iterator& operator = (const iterator& i) { _node = i._node; return (*this); }$/;"	f	class:Array::iterator
+operator =	bst.h	/^      iterator& operator = (const iterator& i) {$/;"	f	class:BSTree::iterator
+operator =	dlist.h	/^      iterator& operator = (const iterator& i) { $/;"	f	class:DList::iterator
+operator ==	array.h	/^      bool operator == (const iterator& i) const { return !( (*this) != i); }$/;"	f	class:Array::iterator
+operator ==	bst.h	/^      bool operator == (const iterator& i) const {$/;"	f	class:BSTree::iterator
+operator ==	dlist.h	/^      bool operator == (const iterator& i) const { $/;"	f	class:DList::iterator
+operator []	array.h	/^   T& operator [] (size_t i) { return _data[i]; }$/;"	f	class:Array
+operator []	array.h	/^   const T& operator [] (size_t i) const { return _data[i]; }$/;"	f	class:Array
+pop_back	array.h	/^   void pop_back() {$/;"	f	class:Array
+pop_back	bst.h	/^   void pop_back() {$/;"	f	class:BSTree
+pop_back	dlist.h	/^   void pop_back() { $/;"	f	class:DList
+pop_front	array.h	/^   void pop_front() {$/;"	f	class:Array
+pop_front	bst.h	/^   void pop_front() {$/;"	f	class:BSTree
+pop_front	dlist.h	/^   void pop_front() {$/;"	f	class:DList
+pop_trace	bst.h	/^      oneTrace* pop_trace() { $/;"	f	class:BSTree::iterator
+print	bst.h	/^   void print() {}$/;"	f	class:BSTree
+push_back	array.h	/^   void push_back(const T& x) {$/;"	f	class:Array
+push_back	dlist.h	/^   void push_back(const T& x) {$/;"	f	class:DList
+report	myUsage.h	/^   void report(bool repTime, bool repMem) {$/;"	f	class:MyUsage
+reserve	array.h	/^   void reserve(size_t n) { $/;"	f	class:Array
+reset	myUsage.h	/^   void reset() {$/;"	f	class:MyUsage
+reset_keypress	myGetChar.cpp	/^static void reset_keypress(void)$/;"	f	file:
+resize	array.h	/^   void resize(size_t n) {$/;"	f	class:Array
+setMemUsage	myUsage.h	/^   void setMemUsage() { _currentMem = checkMem() - _initMem; }$/;"	f	class:MyUsage
+setTimeUsage	myUsage.h	/^   void setTimeUsage() {$/;"	f	class:MyUsage
+set_keypress	myGetChar.cpp	/^static void set_keypress(void)$/;"	f	file:
+size	array.h	/^   size_t size() const { return _size; }$/;"	f	class:Array
+size	bst.h	/^   size_t size() {$/;"	f	class:BSTree
+size	dlist.h	/^   size_t size() const {  $/;"	f	class:DList
+sort	array.h	/^   void sort() const { if (!empty()) ::sort(_data, _data+_size); }$/;"	f	class:Array
+sort	bst.h	/^   void sort() {}$/;"	f	class:BSTree
+sort	dlist.h	/^   void sort() const { $/;"	f	class:DList
+stored_settings	myGetChar.cpp	/^static struct termios stored_settings;$/;"	v	typeref:struct:termios	file:
+swap	dlist.h	/^   void swap(DListNode<T>* a,DListNode<T>* b) const {$/;"	f	class:DList
+toMax	bst.h	/^      void toMax () {$/;"	f	class:BSTree::iterator
+toMin	bst.h	/^      void toMin () {$/;"	f	class:BSTree::iterator
+traverse	bst.h	/^   bool traverse(iterator& target) {$/;"	f	class:BSTree
+traverse	bst.h	/^   void traverse (T x, iterator& insert) {$/;"	f	class:BSTree
+~Array	array.h	/^   ~Array() { delete []_data; }$/;"	f	class:Array
+~BSTree	bst.h	/^   ~BSTree() { clear(); delete _root; }$/;"	f	class:BSTree
+~DList	dlist.h	/^   ~DList() { clear(); delete _head; }$/;"	f	class:DList
+~iterator	array.h	/^      ~iterator() {} \/\/ Should NOT delete _node$/;"	f	class:Array::iterator
+~iterator	bst.h	/^      ~iterator() {}$/;"	f	class:BSTree::iterator
+~iterator	dlist.h	/^      ~iterator() {} \/\/ Should NOT delete _node$/;"	f	class:DList::iterator

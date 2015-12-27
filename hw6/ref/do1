@@ -1,0 +1,21 @@
+cirr ../tests.fraig/strash01.aag
+cirp -fl
+cirr ../tests.fraig/strash02.aag -r
+cirp -fl
+cirr ../tests.fraig/strash03.aag -r
+cirp -fl
+cirr ../tests.fraig/strash04.aag -r
+cirp -fl
+cirr ../tests.fraig/strash05.aag -r
+cirp -fl
+cirr ../tests.fraig/strash06.aag -r
+cirp -fl
+cirr ../tests.fraig/strash07.aag -r
+cirp -fl
+cirr ../tests.fraig/strash08.aag -r
+cirp -fl
+cirr ../tests.fraig/strash09.aag -r
+cirp -fl
+cirr ../tests.fraig/strash10.aag -r
+cirp -fl
+q -f

@@ -1,0 +1,65 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ADT	adtTest.h	28;"	d
+ADT_TEST_H	adtTest.h	9;"	d
+AdtAddCmd	adtTest.h	/^CmdClass(AdtAddCmd);$/;"	v
+AdtDeleteCmd	adtTest.h	/^CmdClass(AdtDeleteCmd);$/;"	v
+AdtPrintCmd	adtTest.h	/^CmdClass(AdtPrintCmd);$/;"	v
+AdtResetCmd	adtTest.h	/^CmdClass(AdtResetCmd);$/;"	v
+AdtSortCmd	adtTest.h	/^CmdClass(AdtSortCmd);$/;"	v
+AdtTest	adtTest.h	/^class AdtTest$/;"	c
+AdtTestObj	adtTest.cpp	/^AdtTestObj::AdtTestObj()$/;"	f	class:AdtTestObj
+AdtTestObj	adtTest.h	/^   AdtTestObj(const AdtTestObj& o) : _str(o._str) {}$/;"	f	class:AdtTestObj
+AdtTestObj	adtTest.h	/^   AdtTestObj(const string& s)$/;"	f	class:AdtTestObj
+AdtTestObj	adtTest.h	/^class AdtTestObj$/;"	c
+AdtType	adtTest.h	29;"	d
+N	adtTest.h	83;"	d
+RANDOM_ACCESS	adtTest.h	26;"	d
+TEST_ARRAY	adtTest.h	24;"	d
+TEST_BST	adtTest.h	25;"	d
+_container	adtTest.h	/^   AdtType<AdtTestObj>   _container;$/;"	m	class:AdtTest
+_str	adtTest.h	/^   string      _str;  \/\/ _str.length() should alywas <= _strLen$/;"	m	class:AdtTestObj
+_strLen	adtTest.cpp	/^int AdtTestObj::_strLen = 6;$/;"	m	class:AdtTestObj	file:
+_strLen	adtTest.h	/^   static int  _strLen;$/;"	m	class:AdtTestObj
+add	adtTest.h	/^   void add() { add(AdtTestObj()); }$/;"	f	class:AdtTest
+add	adtTest.h	/^   void add(const AdtTestObj& o) {$/;"	f	class:AdtTest
+adtTest	adtTest.cpp	/^AdtTest adtTest;$/;"	v
+deleteAll	adtTest.h	/^   void deleteAll() { _container.clear(); }$/;"	f	class:AdtTest
+deleteBack	adtTest.h	/^   void deleteBack(size_t repeat = 1) {$/;"	f	class:AdtTest
+deleteFront	adtTest.h	/^   void deleteFront(size_t repeat = 1) {$/;"	f	class:AdtTest
+deleteObj	adtTest.h	/^   bool deleteObj(const AdtTestObj& o) { return _container.erase(o); }$/;"	f	class:AdtTest
+deleteRandom	adtTest.h	/^   void deleteRandom(size_t repeat = 1) {$/;"	f	class:AdtTest
+exec	adtTest.cpp	/^AdtAddCmd::exec(const string& option)$/;"	f	class:AdtAddCmd
+exec	adtTest.cpp	/^AdtDeleteCmd::exec(const string& option)$/;"	f	class:AdtDeleteCmd
+exec	adtTest.cpp	/^AdtPrintCmd::exec(const string& option)$/;"	f	class:AdtPrintCmd
+exec	adtTest.cpp	/^AdtResetCmd::exec(const string& option)$/;"	f	class:AdtResetCmd
+exec	adtTest.cpp	/^AdtSortCmd::exec(const string& option)$/;"	f	class:AdtSortCmd
+getPos	adtTest.h	/^   AdtType<AdtTestObj>::iterator getPos(size_t pos) {$/;"	f	class:AdtTest
+help	adtTest.cpp	/^AdtAddCmd::help() const$/;"	f	class:AdtAddCmd
+help	adtTest.cpp	/^AdtDeleteCmd::help() const$/;"	f	class:AdtDeleteCmd
+help	adtTest.cpp	/^AdtPrintCmd::help() const$/;"	f	class:AdtPrintCmd
+help	adtTest.cpp	/^AdtResetCmd::help() const$/;"	f	class:AdtResetCmd
+help	adtTest.cpp	/^AdtSortCmd::help() const$/;"	f	class:AdtSortCmd
+initAdtCmd	adtTest.cpp	/^initAdtCmd()$/;"	f
+main	main.cpp	/^main(int argc, char** argv)$/;"	f
+myexit	main.cpp	/^myexit()$/;"	f	file:
+operator <	adtTest.h	/^   bool operator < (const AdtTestObj& o) const { return (_str < o._str); }$/;"	f	class:AdtTestObj
+operator <<	adtTest.cpp	/^ostream& operator << (ostream& os, const AdtTestObj& o)$/;"	f
+operator ==	adtTest.h	/^   bool operator == (const AdtTestObj& o) const { return (_str == o._str); }$/;"	f	class:AdtTestObj
+print	adtTest.h	/^   void print(bool reverse = false, bool verbose = false) {$/;"	f	class:AdtTest
+printBackward	adtTest.h	/^   void printBackward() {$/;"	f	class:AdtTest
+printData	adtTest.h	/^   void printData(size_t idx, AdtType<AdtTestObj>::iterator li,$/;"	f	class:AdtTest
+printForward	adtTest.h	/^   void printForward() {$/;"	f	class:AdtTest
+reset	adtTest.h	/^   void reset(int len) { deleteAll(); AdtTestObj::setLen(len); }$/;"	f	class:AdtTest
+setLen	adtTest.h	/^   static void setLen(int len) { _strLen = len; }$/;"	f	class:AdtTestObj
+sort	adtTest.h	/^   void sort() { _container.sort(); }$/;"	f	class:AdtTest
+usage	adtTest.cpp	/^AdtAddCmd::usage(ostream& os) const$/;"	f	class:AdtAddCmd
+usage	adtTest.cpp	/^AdtDeleteCmd::usage(ostream& os) const$/;"	f	class:AdtDeleteCmd
+usage	adtTest.cpp	/^AdtPrintCmd::usage(ostream& os) const$/;"	f	class:AdtPrintCmd
+usage	adtTest.cpp	/^AdtResetCmd::usage(ostream& os) const$/;"	f	class:AdtResetCmd
+usage	adtTest.cpp	/^AdtSortCmd::usage(ostream& os) const$/;"	f	class:AdtSortCmd
+usage	main.cpp	/^usage()$/;"	f	file:
