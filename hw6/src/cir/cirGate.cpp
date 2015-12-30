@@ -51,11 +51,6 @@ CirGate::reportGate() const
 void
 CirGate::reportFloatGates() const
 {
-      for(int j=0;j<(int)getFanInSize();j++) {
-         if(!cirMgr -> myGetGate((getFanInId(j) )/2))  cout<<getGateId()<<" ";
-         else {cirMgr -> myGetGate((getFanInId(j))/2) -> reportFloatGates(); }
-     }
-     ++_visit;
 }
 
 void
@@ -80,12 +75,9 @@ CirGate::atomicReportFanin(int level,int callLevel) const
       if(level > -1) {
          for(int i=0; i< (int)_faninIdList.size(); i++) {
             for(int j =0; j < (callLevel-level); j++) { cout<<"  ";}
-            fanin = cirMgr -> getGate(_faninIdList[i]/2);
-            if( !(fanin) ) { cout<<"UNDEF "<<_faninIdList[i]/2<<endl; }
-            else {
-               cout<<(_faninIdList[i]%2 ? "!": "");
-               fanin -> atomicReportFanin(level,callLevel);
-            }
+            fanin = this -> getFanInGate(0);
+            cout<<(_faninIdList[i]%2 ? "!": "");
+            fanin -> atomicReportFanin(level,callLevel);
          }
       }
    }
@@ -112,7 +104,7 @@ CirGate::atomicReportFanout(int level,int callLevel) const
       if(level > -1) {
          for(int i=0; i< (int)_fanoutIdList.size(); i++) {
             for(int j =0; j < (callLevel-level); j++) { cout<<"  ";}
-            fanout = cirMgr -> myGetGate(_fanoutIdList[i]/2);
+            fanout = cirMgr -> getGate(_fanoutIdList[i]/2);
             if( !(fanout) ) { cout<<"UNDEF "<<_fanoutIdList[i]/2<<endl; }
             else {
                cout<<(_fanoutIdList[i]%2 ? "!": "");

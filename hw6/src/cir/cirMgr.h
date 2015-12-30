@@ -34,28 +34,7 @@ public:
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
    CirGate* getGate(unsigned gid) const { 
-      //resetVisit();
-      bool exist = false;
-      int gateNum;
-      for(int i=0; i<(int)_indexList.size() ; i++) {
-         if(_indexList[i] == gid) {exist = true; gateNum = i; break;}
-      }
-      if(exist) {
-         if(_totalList[gateNum] != 0) {return _totalList[gateNum];}
-         else {return 0;}
-      }
-      return 0;
-   }
-   CirGate* myGetGate(unsigned gid) const { 
-      bool exist = false;
-      int gateNum;
-      for(int i=0; i<(int)_indexList.size() ; i++) {
-         if(_indexList[i] == gid) {exist = true; gateNum = i; break;}
-      }
-      if(exist) {
-         if(_totalList[gateNum] != 0) {return _totalList[gateNum];}
-         else {return 0;}
-      }
+      if(gid < _totalList.size())   return _totalList[gid];
       return 0;
    }
    
@@ -73,8 +52,8 @@ public:
 private:
    GateList   _totalList;
    IdList     _indexList;
-   IdList     _fltGates;
-   IdList     _unusedGates;
+   GateList     _fltGates;
+   GateList     _unusedGates;
    GateList   _piList;
    GateList   _poList;
    mutable GateList   _aigList;

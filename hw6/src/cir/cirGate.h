@@ -53,7 +53,8 @@ public:
    void resetGateVisit() {_visit = _classVisit; }
    unsigned getFanInId(int i) const {return _faninIdList[i];}
    CirGate* getFanInGate(int i) const {return _faninList[i] -> gate();}
-   unsigned getFanInSize()const {return _faninIdList.size();}
+   GateV* getFanInGateV(int i) const {return _faninList[i];}
+   unsigned getFanInSize()const {return _faninList.size();}
    unsigned getFanOutSize()const {return _fanoutIdList.size();}
    void setGateName(string name) {_gateName = name;}
    string getGateName() const {return _gateName;}
@@ -111,7 +112,6 @@ public:
    PiGate(unsigned id, int No):CirGate(id,No) {}
    virtual string getTypeStr() const { return "PI";}
    virtual void printGate() const { 
-      ++_visit;
       cout<<" PI  "<<_gateID;
    };
 private:
@@ -149,7 +149,7 @@ public:
 class UndefGate: public CirGate
 {
 public:
-   UndefGate(): CirGate(0,0){}
+   UndefGate(unsigned id,int No): CirGate(id,No){}
    virtual string getTypeStr() const {return "UNDEF";}
    virtual void printGate() const { 
       _visit++;
