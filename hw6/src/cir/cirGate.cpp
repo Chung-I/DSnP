@@ -80,7 +80,7 @@ CirGate::atomicReportFanin(int level,int callLevel) const
       if(level > -1) {
          for(int i=0; i< (int)_faninIdList.size(); i++) {
             for(int j =0; j < (callLevel-level); j++) { cout<<"  ";}
-            fanin = cirMgr -> myGetGate(_faninIdList[i]/2);
+            fanin = cirMgr -> getGate(_faninIdList[i]/2);
             if( !(fanin) ) { cout<<"UNDEF "<<_faninIdList[i]/2<<endl; }
             else {
                cout<<(_faninIdList[i]%2 ? "!": "");

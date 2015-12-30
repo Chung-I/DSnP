@@ -19,7 +19,11 @@ using namespace std;
 #include "cirDef.h"
 
 extern CirMgr *cirMgr;
-
+enum DFSFunc {
+   DFSAig,
+   DFSVisit,
+   DFSPrint
+};
 // TODO: Define your own data members and member functions
 class CirMgr
 {
@@ -30,7 +34,7 @@ public:
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
    CirGate* getGate(unsigned gid) const { 
-      resetVisit();
+      //resetVisit();
       bool exist = false;
       int gateNum;
       for(int i=0; i<(int)_indexList.size() ; i++) {
@@ -75,7 +79,7 @@ private:
    GateList   _poList;
    mutable GateList   _aigList;
    int        _maxGateId;
-   void DFS(CirGate*) const;
+   void DFS(CirGate*,DFSFunc) const;
    void DFVisit(CirGate*) const;
    void DFAig(CirGate*) const;
    mutable int   dfsNum;

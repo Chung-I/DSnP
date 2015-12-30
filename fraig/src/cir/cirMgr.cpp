@@ -152,6 +152,129 @@ parseError(CirParseError err)
 bool
 CirMgr::readCircuit(const string& fileName)
 {
+   CirParseError err;
+   ifstream ifs(fileName.c_str());
+   int temp;
+   int MILOA[5];
+   int lineNo = 1;   //record line number, later store in CirGate data member _lineNo
+   if(!ifs.is_open()) {
+      ifs.close(); 
+      cout<<"Cannot open design \""<<fileName<<"\"!!"<<endl;
+      cirMgr = 0;
+      return false;  
+   }
+   string s;
+   ifs>>s;
+   if(myStrNCmp(s,"aag",3))  //reading "aag" 
+   {   
+      err = EXTRA_SPACE;   
+      cout<<"error... couldn't find aag... exiting... "<<s<<endl;
+      return false;
+   }
+   for(int i=0;i<5;i++) {  
+      if(!(ifs>>MILOA[i])) {  
+         err = EXTRA_SPACE;   
+         cout<<"error in MILOA... exiting..."<<endl;
+         return false;
+      }
+   }
+   _maxGateId = MILOA[0];
+   _indexList.push_back(0);   //construct const0 gate
+   _totalList.push_back(new ConstGate());   //construct const0 gate
+   for(int i=0; i< MILOA[1]; i++) {
+      ifs>>temp;
+      if(temp/2 != 0) {  //if it is not a const gate
+         _indexList.push_back(temp/2);
+         _totalList.push_back(new PiGate(temp/2,lineNo++));
+         _piList.push_back(_totalList.back());
+      }
+   }
+   for(int i=0; i< MILOA[3]; i++) {
+      ifs>>temp;
+      _indexList.push_back(++MILOA[0]);
+      _totalList.push_back(new PoGate(MILOA[0], lineNo++));
+      _totalList.back() -> addFanInIdList(temp);
+      _poList.push_back(_totalList.back());
+   }   
+   for(int i=0; i< MILOA[4]; i++) {
+      ifs>>temp;
+      _indexList.push_back(temp/2);
+      _totalList.push_back(new AigGate(temp/2,lineNo++));
+      _aigList.push_back(_totalList.back());
+      ifs>>temp;
+      _totalList.back() -> addFanInIdList(temp);   //store the raw faninId(inverted or not is also stored) in FanInIdList
+      ifs>>temp;
+      _totalList.back()-> addFanInIdList(temp);
+      
+   }
+   for(int i=0;i<_poList.size();i++) {
+      if(myGetGate((_poList[i] ->getFanInId(0))/2 ) ) {
+         myGetGate((_poList[i] ->getFanInId(0))/2 ) 
+         -> addFanOutIdList(_poList[i] -> getGateId()*2+(_poList[i] -> getFanInId(0)%2));
+      }
+   }
+   for(int i=0;i<_aigList.size();i++) {
+      for(int j=0;j<(int)_aigList[i] -> getFanInSize();j++)  {
+         if(myGetGate((_aigList[i] ->getFanInId(j))/2 ) ) {
+            myGetGate((_aigList[i] ->getFanInId(j))/2 ) 
+            -> addFanOutIdList(_aigList[i] -> getGateId()*2+(_aigList[i] -> getFanInId(j)%2));
+         }
+      }
+   }
+   string i = "i";
+   string o = "o"; 
+   string c = "c";
+   int inputCount = 0;
+   int outputCount = 0;
+   while(ifs>>s) {
+      if(!myStrNCmp(s,c,1))   break;
+      if(inputCount >= _piList.size() && outputCount >= _poList.size() )   break;
+      if( !(myStrNCmp(s,i,1)) ) {
+         string gateNum = s.substr(1);
+         stringstream ss;
+         ss<<gateNum;
+         int intGateNum;
+         ss>>intGateNum;
+         ifs>>s;
+         _piList[intGateNum] -> setGateName(s);
+         inputCount++;
+      }
+      else if( !(myStrNCmp(s,o,1)) ) {
+         string gateNum = s.substr(1);
+         stringstream ss;
+         ss<<gateNum;
+         int intGateNum;
+         ss>>intGateNum;
+         ifs>>s;
+         _poList[intGateNum] -> setGateName(s);
+         outputCount++;
+      }
+   }
+   /*for(int i=0;i<(int)_poList.size();i++) { DFVisit(_poList[i]); }
+   for(int i=1;i<_totalList.size();i++) {
+      if(!_totalList[i] -> visited()) { 
+      if(_totalList[i] -> )_unusedGates.push_back(_totalList[i] -> getGateId()); }
+   }*/
+   for(int i=1;i<(int)_totalList.size();i++) { //start from 1 because 0 is const0 gate
+      if(_totalList[i] -> getTypeStr() != "PO") {
+         if(!_totalList[i] -> getFanOutSize())   _unusedGates.push_back(_totalList[i] -> getGateId());
+      }
+   }
+   
+   for(int i=0;i<(int)_totalList.size();i++) {
+         for(int j=0;j<(int)_totalList[i]->getFanInSize();j++) {
+            if(!myGetGate( (_totalList[i] -> getFanInId(j) )/2)) {
+               _fltGates.push_back(_totalList[i] -> getGateId());   
+               break;
+            }
+          }
+   }
+   resetVisit();
+   _aigList.clear();
+   for(int i=0 ;i<_poList.size();i++) {
+      DFAig(_poList[i]);
+   }
+   resetVisit();
    return true;
 }
 
