@@ -9,7 +9,6 @@
 #include <cassert>
 #include "cirMgr.h"
 #include "cirGate.h"
-#include "cirFraig.h"
 #include "sat.h"
 #include "myHashMap.h"
 #include "util.h"
@@ -35,6 +34,8 @@ using namespace std;
 void
 CirMgr::strash()
 {
+  
+
 }
 
 void

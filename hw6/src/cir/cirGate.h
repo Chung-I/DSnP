@@ -39,28 +39,30 @@ friend class GateV;
 public:
    CirGate(unsigned id,int No): _gateID(id),_lineNo(No), _visit(_classVisit) {}
    CirGate(unsigned id): _gateID(id), _visit(_classVisit) {}
+   CirGate() {}
    virtual ~CirGate() {}
    // Basic access methods
-   virtual string getTypeStr() const  = 0;
-   virtual void setLineNo(int no) {_lineNo = no; }
+   virtual string getTypeStr() const {return "cirGate";};
+   //virtual void setLineNo(int no) {_lineNo = no; }
    unsigned getLineNo() const { return _lineNo; }
-   void setGateId(int Id) {_gateID = Id; }
+   //void setGateId(int Id) {_gateID = Id; }
    unsigned getGateId() const {return _gateID;}
    virtual bool visited() const {
       if(_visit != _classVisit)  return true;
       return false;
    }
    void resetGateVisit() {_visit = _classVisit; }
-   unsigned getFanInId(int i) const {return _faninIdList[i];}
    CirGate* getFanInGate(int i) const {return _faninList[i] -> gate();}
    GateV* getFanInGateV(int i) const {return _faninList[i];}
+   CirGate* getFanOutGate(int i) const {return _fanoutList[i] -> gate();}
+   GateV* getFanOutGateV(int i) const {return _fanoutList[i];}
    unsigned getFanInSize()const {return _faninList.size();}
-   unsigned getFanOutSize()const {return _fanoutIdList.size();}
+   unsigned getFanOutSize()const {return _fanoutList.size();}
    void setGateName(string name) {_gateName = name;}
    string getGateName() const {return _gateName;}
    void visitGate() {++_visit;};
    // Printing functions
-   virtual void printGate() const = 0;
+   virtual void printGate() const {cout<<"cirGate"; return;};
    virtual void printGateName() const {if(!_gateName.empty())   cout<<"("<<_gateName<<")";}
    void reportGate() const;
    void reportFloatGates() const;
@@ -68,20 +70,18 @@ public:
    void atomicReportFanin(int level,int callLevel) const;
    void atomicReportFanout(int level,int callLevel) const;
    void reportFanout(int level) const;
-   void addFanInIdList(unsigned id) {_faninIdList.push_back(id);}
    void addFanInList(CirGate* inGate,bool phase) {_faninList.push_back(new GateV(inGate,phase));}
-   void addFanOutIdList(unsigned id) {_fanoutIdList.push_back(id);}
    void addFanOutList(CirGate* outGate,bool phase) {_fanoutList.push_back(new GateV(outGate,phase));}
    static size_t    _classVisit;
 private:
 
 protected:
-   IdList           _faninIdList; 
+   //IdList           _faninIdList; 
    vector<GateV*>    _faninList;
-   IdList           _fanoutIdList;
+   //IdList           _fanoutIdList;
    vector<GateV*>    _fanoutList;
-   string           _gateName;
    unsigned         _gateID;
+   string           _gateName;
    mutable size_t   _visit;
    int              _lineNo;
 };
@@ -137,7 +137,7 @@ class ConstGate: public CirGate
 {
 public:
    ConstGate(): CirGate(0,0){}
-   virtual string getTypeStr() const {return "CONST0";}
+   virtual string getTypeStr() const {return "CONST";}
    virtual void printGate() const { 
       _visit++;
       cout<<"CONST0"; 

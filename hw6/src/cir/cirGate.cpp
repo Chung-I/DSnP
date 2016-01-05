@@ -57,27 +57,25 @@ void
 CirGate::reportFanin(int level) const
 {
    
+   cirMgr -> resetVisit();
    assert (level >= 0);
    atomicReportFanin(level,level);
-   cirMgr -> resetVisit();
 }
 void
 CirGate::atomicReportFanin(int level,int callLevel) const
 {
    if(level <0)   return;
    --level;
-   CirGate* fanin;
    cout<<getTypeStr()<<" "<<_gateID;
-   if(visited() && level > -1)   cout<<" (*)";
+   if(visited() && level > -1 && _faninList.size() )   cout<<" (*)";
    cout<<endl;
    if(!visited()) {
       ++_visit;
       if(level > -1) {
-         for(int i=0; i< (int)_faninIdList.size(); i++) {
+         for(int i=0; i< (int)_faninList.size(); i++) {
             for(int j =0; j < (callLevel-level); j++) { cout<<"  ";}
-            fanin = this -> getFanInGate(0);
-            cout<<(_faninIdList[i]%2 ? "!": "");
-            fanin -> atomicReportFanin(level,callLevel);
+            cout<<(_faninList[i] -> isInv()  ? "!": "");
+            _faninList[i] -> gate() -> atomicReportFanin(level,callLevel);
          }
       }
    }
@@ -85,9 +83,9 @@ CirGate::atomicReportFanin(int level,int callLevel) const
 void
 CirGate::reportFanout(int level) const
 {
+   cirMgr -> resetVisit();
    assert (level >= 0);
    atomicReportFanout(level,level);
-   cirMgr -> resetVisit();
 }
 
 void
@@ -95,21 +93,16 @@ CirGate::atomicReportFanout(int level,int callLevel) const
 {
    if(level <0)   return;
    --level;
-   CirGate* fanout;
    cout<<getTypeStr()<<" "<<_gateID;
-   if(visited() && level > -1)   cout<<" (*)";
+   if(visited() && level > -1 && _fanoutList.size())   cout<<" (*)";
    cout<<endl;
    if(!visited()) {
       ++_visit;
       if(level > -1) {
-         for(int i=0; i< (int)_fanoutIdList.size(); i++) {
+         for(int i=0; i< (int)_fanoutList.size(); i++) {
             for(int j =0; j < (callLevel-level); j++) { cout<<"  ";}
-            fanout = cirMgr -> getGate(_fanoutIdList[i]/2);
-            if( !(fanout) ) { cout<<"UNDEF "<<_fanoutIdList[i]/2<<endl; }
-            else {
-               cout<<(_fanoutIdList[i]%2 ? "!": "");
-               fanout -> atomicReportFanout(level,callLevel);
-            }
+               cout<<(_fanoutList[i] -> isInv() ? "!": "");
+               _fanoutList[i] -> gate() -> atomicReportFanout(level,callLevel);
          }
       }
    }

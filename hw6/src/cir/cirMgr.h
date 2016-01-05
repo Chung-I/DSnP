@@ -34,7 +34,7 @@ public:
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
    CirGate* getGate(unsigned gid) const { 
-      if(gid < _totalList.size())   return _totalList[gid];
+      if(gid < _totalList.size())  return _totalList[gid];
       return 0;
    }
    
@@ -50,17 +50,23 @@ public:
    void printFloatGates() const;
    void writeAag(ostream&) const;
 private:
-   GateList   _totalList;
-   IdList     _indexList;
+   GateList     _totalList;   
+   vector<int>  _indexList;
    GateList     _fltGates;
    GateList     _unusedGates;
    GateList   _piList;
    GateList   _poList;
-   mutable GateList   _aigList;
+   GateList   _aigList;
    int        _maxGateId;
    void DFS(CirGate*,DFSFunc) const;
-   void DFVisit(CirGate*) const;
-   void DFAig(CirGate*) const;
+   void addfltGate(CirGate* fltGate) {
+      for(int flt=0;flt<_fltGates.size();flt++) {
+         if(fltGate == _fltGates[flt]) return;
+      }
+      _fltGates.push_back(fltGate);
+   }
+   //void DFVisit(CirGate*) const;
+   //void DFAig(CirGate*) const;
    mutable int   dfsNum;
 };
 

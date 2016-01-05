@@ -16,52 +16,61 @@
 
 using namespace std;
 
-// TODO: Feel free to define your own classes, variables, or functions.
-
 #include "cirDef.h"
 
 extern CirMgr *cirMgr;
-
+enum DFSFunc {
+   DFSAig,
+   DFSVisit,
+   DFSPrint,
+   DFSUpdate
+};
+// TODO: Define your own data members and member functions
 class CirMgr
 {
 public:
-   CirMgr() {}
-   ~CirMgr() {} 
+   CirMgr(){}
+   ~CirMgr() {}
 
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
-   CirGate* getGate(unsigned gid) const { return 0; }
-
+   CirGate* getGate(unsigned gid) const { 
+      if(gid < _totalList.size())  return _totalList[gid];
+      return 0;
+   }
+   
+   void resetVisit() const;
    // Member functions about circuit construction
    bool readCircuit(const string&);
-
-   // Member functions about circuit optimization
-   void sweep();
-   void optimize();
-
-   // Member functions about simulation
-   void randomSim();
-   void fileSim(ifstream&);
-   void setSimLog(ofstream *logFile) { _simLog = logFile; }
-
-   // Member functions about fraig
-   void strash();
-   void printFEC() const;
-   void fraig();
-
+   
    // Member functions about circuit reporting
    void printSummary() const;
    void printNetlist() const;
    void printPIs() const;
    void printPOs() const;
    void printFloatGates() const;
-   void printFECPairs() const;
    void writeAag(ostream&) const;
-   void writeGate(ostream&, CirGate*) const;
-
 private:
-   ofstream           *_simLog;
-
+   GateList     _totalList;   
+   vector<int>  _indexList;
+   GateList     _fltGates;
+   GateList     _unusedGates;
+   GateList   _piList;
+   GateList   _poList;
+   GateList   _aigList;
+   GateList   _dfsList;
+   int        _maxGateId;
+   void DFS(CirGate*,DFSFunc) const;
+   void updateDfsList();
+   void addfltGate(CirGate* fltGate) {
+      for(int flt=0;flt<_fltGates.size();flt++) {
+         if(fltGate == _fltGates[flt]) return;
+      }
+      _fltGates.push_back(fltGate);
+   }
+   //void DFVisit(CirGate*) const;
+   //void DFAig(CirGate*) const;
+   mutable int   dfsNum;
 };
 
 #endif // CIR_MGR_H

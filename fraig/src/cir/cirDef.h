@@ -20,4 +20,6 @@ class CirGate;
 class CirMgr;
 class SatSolver;
 
+typedef vector<CirGate*>           GateList;
+typedef vector<unsigned>           IdList;
 #endif // CIR_DEF_H

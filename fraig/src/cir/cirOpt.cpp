@@ -33,6 +33,21 @@ using namespace std;
 void
 CirMgr::sweep()
 {
+   
+   for(int i=0;i<_totalList.size();i++) {
+      if(!_totalList[i].visited()) {
+         for(int gateNum=0;gateNum<getFanInSize();gateNum++) {
+            _totalList.getFanInGate(gateNum) -> deleteFanOutGate(_totalList[gateNum]);
+         }
+         for(int gateNum=0;gateNum<getFanOutSize();gateNum++) {
+            _totalList.getFanOutGate(gateNum) -> deleteFanInGate(_totalList[gateNum]);
+         }
+         cout<<"Sweeping: "<<_totalList[i]->getTypeStr()
+         <<"("<<_totalList[i]->getGateId()<<")"<<" removed..."<<endl;
+         _totalList.erase(_totalList.begin()+i);
+      }
+   }
+   updateLists();
 }
 
 // Recursively simplifying from POs;
@@ -41,6 +56,7 @@ CirMgr::sweep()
 void
 CirMgr::optimize()
 {
+
 }
 
 /***************************************************/
