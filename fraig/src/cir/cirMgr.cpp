@@ -1,18 +1,19 @@
 /****************************************************************************
   FileName     [ cirMgr.cpp ]
   PackageName  [ cir ]
-  Synopsis     [ Define cir manager functions ]
+     [ Define cir manager functions ]
   Author       [ Chung-Yang (Ric) Huang ]
   Copyright    [ Copyleft(c) 2008-present LaDs(III), GIEE, NTU, Taiwan ]
 ****************************************************************************/
 
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
+#include <sstream>
 #include <cstdio>
 #include <ctype.h>
 #include <cassert>
 #include <cstring>
-#include <sstream>
 #include "cirMgr.h"
 #include "cirGate.h"
 #include "util.h"
@@ -178,15 +179,14 @@ CirMgr::readCircuit(const string& fileName)
          return false;
       }
    }
-  _totalList.reserve(MILOA[0]+MILOA[3]);
-  _totalList.push_back(new ConstGate());
-    for(int i=0;i<MILOA[0]+MILOA[3];i++)  _totalList.push_back(0);
+    _totalList.push_back(new ConstGate);
+    for(int i=1;i<MILOA[0]+MILOA[3]+5;i++)  _totalList.push_back(0);
   _maxGateId = MILOA[0];
    for(int i=0;i<MILOA[1];i++) {
       ifs>>temp;
       if(temp/2 != 0) {
          _totalList[temp/2] = new PiGate(temp/2,lineNo++);
-         _piList.push_back(_totalList[temp/2]);
+         _piList.push_back(temp/2);
       }
    }
    int* poGateWiring = new int[MILOA[3]];
@@ -194,7 +194,7 @@ CirMgr::readCircuit(const string& fileName)
       ifs>>temp;
       _totalList[MILOA[0]+i+1] = new PoGate(MILOA[0]+i+1, lineNo++);
       poGateWiring[i] = temp;
-      _poList.push_back(_totalList[MILOA[0]+i+1]);
+      _poList.push_back(MILOA[0]+i+1);
    }  
    unsigned** andGateWiring = new unsigned*[MILOA[4]];
    for(int row=0;row<MILOA[4];row++) andGateWiring[row] = new unsigned[4];
@@ -209,7 +209,7 @@ CirMgr::readCircuit(const string& fileName)
        newAigId = andGateWiring[Row][0];
        newAigId/=2;
        _totalList[newAigId] = new AigGate(newAigId,lineNo++);
-       _aigList.push_back(_totalList[newAigId]);
+       _aigList.push_back(newAigId);
     }
    vector<CirGate*> fanins; 
    size_t undefId = 0;
@@ -220,35 +220,35 @@ CirMgr::readCircuit(const string& fileName)
          int curGateId = andGateWiring[row][0]/2;
          int phase = andGateWiring[row][col+1]%2;
          if(fanins[col]) {
-            _aigList[row] -> addFanInList(fanins[col],phase);
-            fanins[col] -> addFanOutList(_aigList[row],phase);
+            getGate(_aigList[row]) -> addFanInList(fanins[col],phase);
+            fanins[col] -> addFanOutList(getGate(_aigList[row]),phase);
          } 
          else {
             undefId = andGateWiring[row][col+1]/2;
             _totalList[undefId] = new UndefGate(undefId,0);
             //if not constructed yet -> initialize undef gate, lineNo is 0
-            _totalList[undefId] -> addFanOutList(_aigList[row],phase);
+            _totalList[undefId] -> addFanOutList(getGate(_aigList[row]),phase);
             _totalList[curGateId] -> addFanInList(_totalList[undefId],phase);
-            addfltGate(_aigList[row]);
+            addfltGate(getGate(_aigList[row]));
          }         
       }
       fanins.clear();
    }
 
-   for(int row=0;row<_poList.size();row++) {
+   for(int row=0;row<(int)_poList.size();row++) {
       CirGate* fanin = getGate(poGateWiring[row]/2);
       int phase = poGateWiring[row]%2;
       if(fanin) {
-         _poList[row] -> addFanInList(fanin,phase);
-         fanin -> addFanOutList(_poList[row],phase);
+         getGate(_poList[row]) -> addFanInList(fanin,phase);
+         fanin -> addFanOutList(getGate(_poList[row]),phase);
       }
       else {
             undefId = poGateWiring[row]/2;
            _totalList[undefId] = new UndefGate(undefId,0);
            //if not constructed yet -> initialize undef gate, lineNo is 0
-           _totalList[undefId] -> addFanOutList(_poList[row],phase);
-           _poList[row] -> addFanInList(_totalList[undefId],phase);
-           addfltGate(_poList[row]);
+           _totalList[undefId] -> addFanOutList(getGate(_poList[row]),phase);
+           getGate(_poList[row]) -> addFanInList(_totalList[undefId],phase);
+           addfltGate(getGate(_poList[row]));
       }         
    }
 
@@ -259,7 +259,7 @@ CirMgr::readCircuit(const string& fileName)
    int outputCount = 0;
    while(ifs>>s) {
       if(!myStrNCmp(s,c,1))   break;
-      if(inputCount >= _piList.size() && outputCount >= _poList.size() )   break;
+      if(inputCount >= (int)_piList.size() && outputCount >= (int)_poList.size()) break;
       if( !(myStrNCmp(s,i,1)) ) {
          string gateNum = s.substr(1);
          stringstream ss;
@@ -267,7 +267,7 @@ CirMgr::readCircuit(const string& fileName)
          int intGateNum;
          ss>>intGateNum;
          ifs>>s;
-         _piList[intGateNum] -> setGateName(s);
+         getGate(_piList[intGateNum]) -> setGateName(s);
          inputCount++;
       }
       else if( !(myStrNCmp(s,o,1)) ) {
@@ -277,20 +277,29 @@ CirMgr::readCircuit(const string& fileName)
          int intGateNum;
          ss>>intGateNum;
          ifs>>s;
-         _poList[intGateNum] -> setGateName(s);
+         getGate(_poList[intGateNum]) -> setGateName(s);
          outputCount++;
       }
    }
-   //for(int i=0;i<(int)_poList.size();i++) { DFS(_poList[i],DFSVisit); }
-
-
+   constructDfsList();
+   
    for(int i=1;i<(int)_totalList.size();i++) { //start from 1 because 0 is const0 gate
-    if(_totalList[i] && _totalList[i] -> getTypeStr()!="PO" && !_totalList[i] -> getFanOutSize()) 
-         _unusedGates.push_back(_totalList[i]);
+    if(_totalList[i] && _totalList[i] -> getGateType()!=PO &&
+          _totalList[i] -> getGateType() != CONST &&
+          !_totalList[i] -> getFanOutSize()) 
+         _unusedGates.push_back(_totalList[i]->getGateId());
    }
 
-      updateDfsList();
-
+  // std::sort(_piList.begin(),_piList.end());
+  // std::sort(_poList.begin(),_poList.end());
+  // std::sort(_aigList.begin(),_aigList.end());
+   _fecGates.push_back(_totalList[0]);
+   for(int i=0;i<(int)_dfsList.size();i++) {
+      if(getGate(_dfsList[i])-> getGateType() == AIG)
+      _fecGates.push_back(getGate(_dfsList[i]));
+   }
+   _fecGrps.init(1.6*(_dfsList.size()));
+   _fecGrps.insert(_fecGates[0]->getSimValue(),_fecGates);
    for(int i=0;i<MILOA[4];i++) delete [] andGateWiring[i];
    delete [] andGateWiring;
    delete [] MILOA;
@@ -320,14 +329,14 @@ CirMgr::printSummary() const
    int numOfPi = 0;
    int numOfPo = 0;
    int numOfAig = 0;
-   for(int i=0; i< _totalList.size(); i++ ) {
+   for(int i=0; i< (int)_totalList.size(); i++ ) {
       if(_totalList[i]) {
          if(_totalList[i] -> getTypeStr() == "AIG")   numOfAig++;
          else if(_totalList[i] -> getTypeStr() == "PI")   numOfPi++;
          else if(_totalList[i] -> getTypeStr() == "PO")   numOfPo++;
       }
    }
-   cout<<"Circuit Statistics"<<endl;
+   cout<<endl<<"Circuit Statistics"<<endl;
    cout<<"=================="<<endl;
    cout<<"  PI"<<setw(12)<<right<<numOfPi<<endl;
    cout<<"  PO"<<setw(12)<<right<<numOfPo<<endl;
@@ -339,22 +348,21 @@ CirMgr::printSummary() const
 void
 CirMgr::printNetlist() const
 {
-   cout<<endl;
-   dfsNum = 0;
-   resetVisit();
-     // cout<<"printing netList... "<<endl;
-   for(int i=0; i< (int)_poList.size(); i++) {
-      //cout<<"entering poList loop... "<<endl;
-      this -> DFS(_poList[i], DFSPrint);
+   cout << endl;
+   for (unsigned i = 0, n = (int)_dfsList.size(); i < n; ++i) {
+      cout << "[" << i << "] ";
+      getGate(_dfsList[i])->printGate();
+     cout<<endl; 
    }
-      //cout<<"finishing printing netList... "<<endl;
 }
 
 void
 CirMgr::printPIs() const
 {
-   cout << "POs of the circuit:";
-   for(int i=0 ; i<(int)_piList.size() ;i++)   cout<<" "<<_piList[i] -> getGateId()<<" "; 
+   cout << "PIs of the circuit:";
+   for(int i=0 ; i<(int)_piList.size() ;i++)   
+   cout<<" "<<_piList[i]; 
+   
    cout << endl;
 }
 
@@ -362,7 +370,9 @@ void
 CirMgr::printPOs() const
 {
    cout << "POs of the circuit:";
-   for(int i=0 ; i<(int)_poList.size() ;i++)   cout<<" "<<_poList[i] -> getGateId()<<" "; 
+   for(int i=0 ; i<(int)_poList.size() ;i++)   
+   cout<<" "<<_poList[i]; 
+
    cout << endl;
 }
 
@@ -371,119 +381,238 @@ CirMgr::printFloatGates() const
 {
    if(_fltGates.size()) {  
       cout<<"Gates with floating fanin(s): ";
-      for(int i = 0;i<_fltGates.size();i++)   cout<<_fltGates[i]->getGateId()<<" ";
+      for(int i = 0;i<(int)_fltGates.size();i++)   
+      cout<<_fltGates[i]<<" ";
    }
    if(_unusedGates.size()) {  
       cout<<endl<<"Gates defined but not used  : ";
-      for(int i = 0;i<_unusedGates.size();i++)   cout<<_unusedGates[i]->getGateId()<<" ";
+      for(int i = 0;i<(int)_unusedGates.size();i++)   
+      cout<<_unusedGates[i]<<" ";
    }
+}
+
+void
+CirMgr::printFECPairs() const
+{
 }
 
 void
 CirMgr::writeAag(ostream& outfile) const
 {
    outfile<<"aag "<<_maxGateId<<" "<<_piList.size()<<" 0 "<<_poList.size()<<" "<<_aigList.size()<<endl;
-   for(int i=0; i< _piList.size(); i++)   outfile<<2*(_piList[i] -> getGateId())<<endl;
-   for(int i=0; i< _poList.size(); i++)   outfile<<(_poList[i] -> getFanInGate(0)-> getGateId())<<endl;
-   for(int i=0; i< _aigList.size(); i++) {
-      outfile<<2*(_aigList[i] -> getGateId())<<" ";
-      for(int j=0;j<_aigList[i] -> getFanInSize();j++) {
-         outfile<<_aigList[i] -> getFanInGate(j)->getGateId();
-         if(j+1 < _aigList[i] -> getFanInSize())   outfile<<" ";
+   for(int i=0; i< (int)_piList.size(); i++)   outfile<<2*(_piList[i])<<endl;
+   for(int i=0; i< (int)_poList.size(); i++)   
+   outfile<<(getGate(_poList[i]) -> getFanInGateV(0) -> getWiringId())<<endl;
+
+   for(int i=0; i< (int)_aigList.size(); i++) {
+      outfile<<2*_aigList[i]<<" ";
+      for(int j=0;j<(int) getGate(_aigList[i]) -> getFanInSize();j++) {
+         outfile<<getGate(_aigList[i]) -> getFanInGateV(j)->getWiringId();
+         if(j+1 < (int)getGate(_aigList[i]) -> getFanInSize())   outfile<<" ";
       }
       outfile<<endl;
    }
    for(int i=0;i<(int)_piList.size();i++) {
-      if(!_piList[i] -> getGateName().empty()) {
-         outfile<<"i"<<i<<" "<<_piList[i] -> getGateName()<<endl;
+      if(!getGate(_piList[i]) -> getGateName().empty()) {
+         outfile<<"i"<<i<<" "<<getGate(_piList[i]) -> getGateName()<<endl;
       }
    }
    for(int i=0;i<(int)_poList.size();i++) {
-      if(!_poList[i] -> getGateName().empty()) {
-         outfile<<"o"<<i<<" "<<_poList[i] -> getGateName()<<endl;
+      if(!getGate(_poList[i]) -> getGateName().empty()) {
+         outfile<<"o"<<i<<" "<<getGate(_poList[i]) -> getGateName()<<endl;
       }
    }
 }
+
+void
+CirMgr::writeGate(ostream& outfile, CirGate *g) const
+{
+}
+
 void
 CirMgr::resetVisit() const
 {
-   for(int i=0;i<_totalList.size();i++) {
+   for(int i=0;i<(int)_totalList.size();i++) {
       if(_totalList[i]!=0)   _totalList[i] -> resetGateVisit();
    }
 }
-
-/*void
-CirMgr::DFAig(CirGate* po) const
+void
+CirMgr::DFS(CirGate* thisGate,DFSFunc dfsFunc) 
 {
-   if(po -> getFanInSize()) {
-      for(int i=0;i<(int)po -> getFanInSize();i++) {
-         CirGate* currentGate = myGetGate((po -> getFanInId(i) )/2);
-         if(!currentGate) { 
+   if(thisGate -> getFanInSize()) {
+      if(thisGate->getFanInSize()==2 &&
+      thisGate -> getFanInGate(0)->getGateType()!=AIG &&
+      thisGate -> getFanInGate(1)->getGateType()==AIG) {
+      thisGate->swapFanIn();
+      }
+      
+      for(int i=0;i<(int)thisGate -> getFanInSize();i++) {
+         CirGate* fanin = thisGate -> getFanInGate(i);
+         if(dfsFunc == DFSConstruct && fanin -> getTypeStr() == "UNDEF") { 
             continue;
          }
-         if(! ( myGetGate( (po -> getFanInId(i) )/2) -> visited()) )  { 
-            DFAig(myGetGate( (po -> getFanInId(i))/2));
+         if(!(fanin -> visited()) )  { 
+            DFS(fanin,dfsFunc);
          }
       }
    }
-   if(!po -> visited()) {
-      po -> visitGate();
-      if(po -> getTypeStr() == "AIG")   _aigList.push_back(po);
+   if(!thisGate -> visited()) {
+      if(dfsFunc == DFSVisit) {thisGate -> visitGate();}
+      else if(dfsFunc == DFSConstruct)  {   
+         thisGate -> visitGate();
+         _dfsList.push_back(thisGate->getGateId());
+      }
    }
 }
 
 void
-CirMgr::DFVisit(CirGate* po) const
+CirMgr::updateDfsList() 
 {
-   if(po -> getFanInSize()) {
-      for(int i=0;i<(int)po -> getFanInSize();i++) {
-         CirGate* currentGate = myGetGate((po -> getFanInId(i) )/2);
-         if(!currentGate) { 
-            continue;
-         }
-         if(! ( myGetGate( (po -> getFanInId(i) )/2) -> visited()) )  { 
-            DFVisit(myGetGate( (po -> getFanInId(i))/2));
-         }
-      }
+   resetVisit();
+   for(int i=0;i<(int)_poList.size();i++) {
+      DFS(getGate(_poList[i]),DFSVisit);
    }
-   if(!po -> visited())   po -> visitGate();
-}*/
+   for(int i=0;i<(int)_dfsList.size();i++) {
+      if(!(getGate(_dfsList[i])->visited())) {
+         _dfsList.erase(_dfsList.begin()+i); 
+         --i;
+      }
+
+   }
+   
+}
+void
+CirMgr::constructDfsList() 
+{
+   _dfsList.clear();
+   resetVisit();
+   for(int i=0;i<(int)_poList.size();i++) {
+      DFS(getGate(_poList[i]),DFSConstruct);
+   }
+   _updateDfsListFlag = false;
+}
 
 void
-CirMgr::DFS(CirGate* po,DFSFunc dfsFunc) const
+CirMgr::dfsVisit() 
 {
-   if(po -> getFanInSize()) {
-      for(int i=0;i<(int)po -> getFanInSize();i++) {
-         CirGate* currentGate = po -> getFanInGate(i);
-         if(currentGate -> getTypeStr() == "UNDEF") { 
-            continue;
-         }
-         if(!(currentGate -> visited()) )  { 
-            DFS(currentGate,dfsFunc);
-         }
-      }
-   }
-   if(!po -> visited()) {
-      if(dfsFunc == DFSPrint) {
-         cout<<"["<<dfsNum++<<"]";
-         po -> printGate();
-         po -> visitGate();
-         cout<<" ";
-         for(int i=0;i<(int)po -> getFanInSize();i++) {
-            GateV* VisitingGate = po -> getFanInGateV(i);
-            cout<<(VisitingGate ->gate() -> getTypeStr()=="UNDEF"?"*":"")<<(VisitingGate->isInv()?"!":"")<<VisitingGate -> gate()-> getGateId()
-            <<((i== (po -> getFanInSize()-1))?"":" ");
-         }
-         po -> printGateName();
-         cout<<endl;
-      }
-      else if(dfsFunc == DFSVisit) { po -> visitGate(); }
-      else if(dfsFunc == DFSUpdate) { po -> visitGate(); _dfsList.push_back(po); }
+   resetVisit();
+   for(int i=0;i<(int)_poList.size();i++) {
+      DFS(getGate(_poList[i]),DFSVisit);
    }
 }
 void
-CirMgr::updateDfsList() {
-   for(int i=0;i<_poList.size();i++) {
-      DFS(_poList[i],DFSUpdate);
+CirMgr::eraseGate(CirGate* toBeErased) 
+{
+   _totalList[toBeErased -> getGateId()] = 0;
+   unsigned int eraseId = toBeErased -> getGateId();
+   if(toBeErased -> getGateType() == PI) {
+      for(int i=0;i<(int)_piList.size();i++) {
+         if(_piList[i] == eraseId) _piList.erase(_piList.begin()+i);
+      }
    }
+   else if(toBeErased -> getGateType() == PO) {
+      for(int i=0;i<(int)_poList.size();i++) {
+         if(_poList[i] == eraseId) _poList.erase(_poList.begin()+i);
+      }
+   }
+   else if(toBeErased -> getGateType() == AIG) {
+      for(int i=0;i<(int)_aigList.size();i++) {
+         if(_aigList[i] == eraseId) _aigList.erase(_aigList.begin()+i);
+      }
+   }
+      for(int i=0;i<(int)_unusedGates.size();i++) {
+         if(_unusedGates[i] == eraseId) _unusedGates.erase(_unusedGates.begin()+i);
+      }
+      for(int i=0;i<(int)_fltGates.size();i++) {
+         if(_fltGates[i] == eraseId) _fltGates.erase(_fltGates.begin()+i);
+      }
+    delete toBeErased;     
+}
+void
+CirMgr::preOrderTraverse()
+{
+   _updateDfsListFlag = false;
+   resetVisit();
+   for(int i=0;i<(int)_poList.size();i++) {
+      atomicPreOrderTraverse(getGate(_poList[i]));
+   }
+}
+void
+CirMgr::atomicPreOrderTraverse(CirGate* thisGate)
+{
+   
+   if(!thisGate -> visited()) {
+      thisGate -> visitGate();
+      thisGate -> gateOptimize();
+   }
+   if(thisGate -> getFanInSize()) {  //if thisGate has any fanin
+      for(int i=0;i<(int)thisGate -> getFanInSize();i++) {
+         if(!(thisGate ->getFanInGate(i) -> visited()) )  { 
+            atomicPreOrderTraverse(thisGate -> getFanInGate(i));
+         }
+      }
+   }
+}
+void 
+CirMgr::addfltGate(CirGate* fltGate) 
+{
+   for(int flt=0;flt<(int)_fltGates.size();flt++) {
+      if(fltGate -> getGateId() == _fltGates[flt]) return;
+   }
+   _fltGates.push_back(fltGate -> getGateId());
+}
+void 
+CirMgr::addunusedGate(CirGate* unusedGate) 
+{
+   for(int unused=0;unused<(int)_unusedGates.size();unused++) {
+      if(unusedGate -> getGateId() == _unusedGates[unused]) return;
+   }
+   _unusedGates.push_back(unusedGate -> getGateId());
+}
+
+bool
+CirMgr::checkInv(CirGate* mergeGate,CirGate* toBeMerged){
+   bool g1f1 = mergeGate -> getFanInGateV(0) -> isInv();
+   bool g1f2 = mergeGate -> getFanInGateV(1) -> isInv();
+   bool g2f1 = toBeMerged -> getFanInGateV(0) -> isInv();
+   bool g2f2 = toBeMerged -> getFanInGateV(1) -> isInv();
+   if(g1f1==g2f1 && g1f2==g2f2) return 0;
+   return 1;   
+}
+
+void
+CirMgr::merge(CirGate* mergeGate,CirGate* toBeMerged ) {
+   int inv = checkInv(mergeGate,toBeMerged);
+   if(inv == 1) {
+      return;
+   }
+   else {
+      cout<<"Strashing: "<<mergeGate ->getGateId()<<" merging "
+      <<toBeMerged->getGateId()<<"..."<<endl;
+      toBeMerged -> cutoffFanInWiring();
+      toBeMerged -> cutoffFanOutWiring();
+         for(int to=0;to<(int)toBeMerged -> getFanOutSize();to++) {
+         mergeGate -> addFanOutListV(toBeMerged -> getFanOutGateV(to));
+         toBeMerged -> getFanOutGate(to) -> addFanInList(mergeGate,
+            toBeMerged->getFanOutGateV(to)->isInv());
+         }
+      eraseGate(toBeMerged);
+   }
+}
+
+void
+CirMgr::gateStrash(CirGate* toBeMerged,HashMap<HashKey,size_t >* hash)
+{
+   size_t inId0 = toBeMerged -> getFanInGate(0) -> getGateId();
+   size_t inId1 = toBeMerged -> getFanInGate(1) -> getGateId();
+   if(inId0 > inId1) {
+      toBeMerged -> swapFanIn();
+   }
+   HashKey k((size_t)(toBeMerged->getFanInGate(0)),
+      (size_t)(toBeMerged->getFanInGate(1))); 
+   size_t mergeGate;
+   if (hash -> check(k, mergeGate)) {
+      merge((CirGate*)mergeGate,toBeMerged);
+   }
+   else hash -> forceInsert(k, (size_t)toBeMerged);
 }

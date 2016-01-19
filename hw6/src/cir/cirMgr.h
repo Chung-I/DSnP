@@ -51,7 +51,6 @@ public:
    void writeAag(ostream&) const;
 private:
    GateList     _totalList;   
-   vector<int>  _indexList;
    GateList     _fltGates;
    GateList     _unusedGates;
    GateList   _piList;

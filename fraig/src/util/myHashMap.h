@@ -21,18 +21,46 @@ using namespace std;
 // To use HashMap ADT, you should define your own HashKey class.
 // It should at least overload the "()" and "==" operators.
 //
-// class HashKey
-// {
-// public:
-//    HashKey() {}
-// 
-//    size_t operator() () const { return 0; }
-// 
-//    bool operator == (const HashKey& k) const { return true; }
-// 
-// private:
-// };
-//
+   class SimValue 
+   {
+   public:
+      SimValue(size_t value): _simValue(value) {}
+      size_t operator () () const {
+         return _simValue;
+      }
+      bool operator == (const SimValue& v) const {
+         return (v._simValue == _simValue);
+      }
+      
+   SimValue& operator =(const SimValue val) {
+     _simValue = val._simValue;
+     return (*this);
+   }
+      void set(size_t v) {_simValue = v; }
+   private:
+      size_t _simValue;
+   };
+ class HashKey
+ {
+ public:
+    HashKey(size_t gate0, size_t gate1): in0(gate0),in1(gate1) {}
+ 
+    size_t operator() () const { 
+       size_t k = 0;
+       k ^= ( in0 << (6));
+       k ^= ( in1 << (12));
+       return k; 
+    
+    }
+    bool operator == (const HashKey& k) const { 
+       return ( k.in0 == in0 && k.in1 == in1 ); 
+    }
+ 
+ private:
+ size_t in0;
+ size_t in1;
+ };
+
 template <class HashKey, class HashData>
 class HashMap
 {

@@ -1,0 +1,3 @@
+cirr ../tests.fraig/sim13.aag
+cirg 1000 -fano 100
+q -f

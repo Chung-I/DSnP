@@ -1,0 +1,43 @@
+cirr ../tests.fraig/opt01.aag
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+cirr ../tests.fraig/opt02.aag -r
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+cirr ../tests.fraig/opt03.aag -r
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+cirr ../tests.fraig/opt04.aag -r
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+cirr ../tests.fraig/opt05.aag -r
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+cirr ../tests.fraig/opt06.aag -r
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+cirr ../tests.fraig/opt07.aag -r
+cirp
+cirp -n
+ciroptimize
+cirp
+cirp -n
+q -f

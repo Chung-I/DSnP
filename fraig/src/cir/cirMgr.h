@@ -16,61 +16,89 @@
 
 using namespace std;
 
-#include "cirDef.h"
+// TODO: Feel free to define your own classes, variables, or functions.
 
+#include "cirDef.h"
+#include "cirGate.h"
+#include "myHashMap.h"
 extern CirMgr *cirMgr;
 enum DFSFunc {
    DFSAig,
    DFSVisit,
    DFSPrint,
-   DFSUpdate
+   DFSConstruct
 };
-// TODO: Define your own data members and member functions
+
 class CirMgr
 {
 public:
-   CirMgr(){}
-   ~CirMgr() {}
+   CirMgr() {}
+     ~CirMgr() {} 
 
    // Access functions
    // return '0' if "gid" corresponds to an undefined gate.
    CirGate* getGate(unsigned gid) const { 
       if(gid < _totalList.size())  return _totalList[gid];
-      return 0;
+      return 0; 
    }
-   
    void resetVisit() const;
    // Member functions about circuit construction
    bool readCircuit(const string&);
-   
+
+   // Member functions about circuit optimization
+   void sweep();
+   void optimize();
+
+   // Member functions about simulation
+   void randomSim();
+   void fileSim(ifstream&);
+   void setSimLog(ofstream *logFile) { _simLog = logFile; }
+
+   // Member functions about fraig
+   void strash();
+   void printFEC() const;
+   void fraig();
+
    // Member functions about circuit reporting
    void printSummary() const;
    void printNetlist() const;
    void printPIs() const;
    void printPOs() const;
    void printFloatGates() const;
+   void printFECPairs() const;
    void writeAag(ostream&) const;
+   void writeGate(ostream&, CirGate*) const;
+
 private:
-   GateList     _totalList;   
-   vector<int>  _indexList;
-   GateList     _fltGates;
-   GateList     _unusedGates;
-   GateList   _piList;
-   GateList   _poList;
-   GateList   _aigList;
-   GateList   _dfsList;
-   int        _maxGateId;
-   void DFS(CirGate*,DFSFunc) const;
-   void updateDfsList();
-   void addfltGate(CirGate* fltGate) {
-      for(int flt=0;flt<_fltGates.size();flt++) {
-         if(fltGate == _fltGates[flt]) return;
-      }
-      _fltGates.push_back(fltGate);
-   }
-   //void DFVisit(CirGate*) const;
-   //void DFAig(CirGate*) const;
+   ofstream   *_simLog;
+   vector<CirGate*>   _totalList;   
+   vector<CirGate*>   _fecGates;   
+  vector<unsigned>    _fltGates;
+  vector<unsigned>    _unusedGates;
+  vector<unsigned>    _piList;
+  vector<unsigned>    _poList;
+  vector<unsigned>    _aigList;
+  vector<unsigned>    _dfsList;
+  HashMap<SimValue,FecGroup> _fecGrps;
+   bool _updateDfsListFlag;
    mutable int   dfsNum;
+   int        _maxGateId;
+
+   void DFS(CirGate*, DFSFunc dfsFunc); 
+   void updateDfsList();
+   void constructDfsList();
+   void dfsVisit();
+   void preOrderTraverse();
+   void atomicPreOrderTraverse(CirGate*);
+   void addfltGate(CirGate* fltGate);
+   void addunusedGate(CirGate* unusedGate);
+   void eraseGate(CirGate*);
+   void merge(CirGate* ,CirGate*);
+   void gateStrash(CirGate* ,HashMap<HashKey, size_t >*);
+   bool checkInv(CirGate*,CirGate*);
+   void generateSignal();
+   void for_each_po_simulate();
+   void detectFecGrps();
 };
 
 #endif // CIR_MGR_H

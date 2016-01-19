@@ -15,11 +15,19 @@
 using namespace std;
 
 // TODO: define your own typedef or enum
-
 class CirGate;
 class CirMgr;
 class SatSolver;
-
-typedef vector<CirGate*>           GateList;
-typedef vector<unsigned>           IdList;
+#define FANIN_SIZE  2
+typedef vector<CirGate*>   FecGroup; 
+typedef vector<CirGate*>   GateList; 
+enum GateType {
+   CIR,
+   PI,
+   PO,
+   AIG,
+   UNDEF,
+   CONST,
+   DUMMY
+};
 #endif // CIR_DEF_H

@@ -34,8 +34,13 @@ using namespace std;
 void
 CirMgr::strash()
 {
-  
-
+   HashMap<HashKey,size_t >* hash = new HashMap<HashKey,size_t >(1.6*_dfsList.size());
+   for(int i=0; i<(int) _dfsList.size(); i++) {
+      if(getGate(_dfsList[i]) -> getGateType() == AIG)
+      gateStrash(getGate(_dfsList[i]),hash);
+   } 
+   constructDfsList();
+   delete hash;
 }
 
 void
