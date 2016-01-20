@@ -39,14 +39,14 @@ void
 CirMgr::randomSim()
 {
    _fecGrps.push_back(_fecGates);
-   int failTime = 0;
    int maxFail = round(5*log(_fecGates.size()));
+   _failTime = 0;
    int simulatedPattern = 0;
    cout<<"MAX_FAIL: "<<maxFail<<endl;
-   while(failTime<maxFail && _fecGrps.size()){
+   while(_failTime<maxFail && _fecGrps.size()){
       loadRandSignal();
       for_each_po_simulate();
-      if(!detectFecGrps()) ++failTime;
+      if(!detectFecGrps()) ++_failTime;
       simulatedPattern+=32;
       cout << "Total #FEC Group = "<<_fecGrps.size()<<'\r';
    }
@@ -145,11 +145,11 @@ bool
 CirMgr::detectFecGrps() {
    bool failflag = false; //if theres's splitting, set to true
    bool pairflag = false; //set to true if there's any pairs in the loop
-   
    int originalSize = _fecGrps.size();
+      HashMap<SimValue, FecGroup> newFecGrps;
    for(int gr=0;gr<(int)_fecGrps.size();++gr) {
-      HashMap<SimValue, FecGroup> newFecGrps(_fecGrps[gr].size());
       for(int gt = 0;gt < (int)_fecGrps[gr].size();gt++) {
+         newFecGrps.init(_fecGrps.size());
          FecGroup grp;
          unsigned gate = _fecGrps[gr][gt]/2;
          if( newFecGrps.check( getGate(gate)->getSimValue(),grp )) {

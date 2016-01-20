@@ -84,6 +84,7 @@ private:
   bool                _updateDfsListFlag;
   mutable int         dfsNum;
   int                 _maxGateId;
+  int                 _failTime;
     
 
    void DFS(CirGate*, DFSFunc dfsFunc); 
