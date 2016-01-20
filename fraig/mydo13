@@ -1,0 +1,7 @@
+cirr tests.fraig/sim13.aag
+cirsimulate -File tests.fraig/pattern.13
+cirg 88408
+cirg 88409
+cirg 88410
+cirp -FEC
+q -f

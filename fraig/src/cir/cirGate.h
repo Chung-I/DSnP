@@ -26,6 +26,7 @@ class CirGate;
 //   Define classes
 //------------------------------------------------------------------------
 
+
 class CirGate
 {
 friend class cirMgr;
@@ -33,9 +34,9 @@ friend class GateV;
 class GateV {
 #define NEG 0x1
 public:   
-   GateV(CirGate* g, size_t phase,unsigned id):
+   GateV(CirGate* g, bool phase,unsigned id):
    _gateV(size_t(g) + phase),_gateId(id) { }
-   void setGateV(CirGate* g,size_t phase,unsigned id) {
+   void setGateV(CirGate* g,bool phase,unsigned id) {
       _gateV = size_t(g)+phase;
       _gateId = id;
    }
@@ -127,18 +128,16 @@ public:
    void addFanInListV(GateV* inGateV) {_faninList.push_back(inGateV); }
    void addFanOutList(CirGate* outGate,bool phase) {_fanoutList.push_back(outGate -> getWiringGate(phase)); }
    void addFanOutListV(GateV* outGateV) {_fanoutList.push_back(outGateV); }
-   virtual bool mysimulate() {
-      return ( (!(_faninList[0] ->isInv()) !=
-         (!getFanInGate(0) -> simulate()) ) && 
-         ( (!(_faninList[1] ->isInv()) !=
-         (!getFanInGate(1) -> simulate()) ) ) );
-   }
-   virtual int simulate() = 0;
+   virtual size_t simulate() = 0;
    string getSimValueString() const;
-   int getsimValue() const {return _simValue; }
+   size_t getsimValue() const {return _simValue; }
    SimValue getSimValue() const {return _SimValue;}
+   void gateUpdateFecPair(FecGroup&);
+   void gatePrintFecPair() const;
+   FecGroup getFECs() const { return _FECs; };
    static size_t    _classVisit;
-   
+   Var getVar() const { return _var; }
+   void setVar(const Var& v) { _var = v; } 
 private:
 
 protected:
@@ -154,6 +153,8 @@ protected:
    GateV*           _invWiringGate;
    int              _simValue;
    SimValue         _SimValue;
+   FecGroup         _FECs;
+   Var              _var;
 };
 
 class AigGate: public CirGate
@@ -173,20 +174,21 @@ public:
             cout<<" ("<<getGateName()<<")";
       }
    }
-   virtual int simulate() {
-      _simValue = 
-      ((getFanInGateV(0)->isInv()? 0xFFFFFFFF : 0)^
-      getFanInGate(0) -> getsimValue()) &
-      ((getFanInGateV(1)->isInv()? 0xFFFFFFFF : 0)^
-      getFanInGate(1) -> getsimValue() );
-      _SimValue.set(_simValue);
-//       int sim0;
-//       int sim1;
-//       if(getFanInGateV(0)->isInv()) sim0 =~(getFanInGate(0) -> getSimValue());
-//       else {sim0 = getFanInGate(0) -> getSimValue();}
-//       if(getFanInGateV(1)->isInv()) sim1 =~(getFanInGate(1) -> getSimValue());
-//       else {sim1 = getFanInGate(1) -> getSimValue();}
-//       _simValue = sim0 & sim1;
+   virtual size_t simulate() {
+ //     _simValue = 
+ //     ((getFanInGateV(0)->isInv()? 0xFFFFFFFF : 0)^
+ //     getFanInGate(0) -> getsimValue()) &
+ //     ((getFanInGateV(1)->isInv()? 0xFFFFFFFF : 0)^
+ //     getFanInGate(1) -> getsimValue() );
+ //     _SimValue.set(_simValue);
+       size_t sim0;
+       size_t sim1;
+       if(getFanInGateV(0)->isInv()) sim0 =~(getFanInGate(0) -> getsimValue());
+       else {sim0 = getFanInGate(0) -> getsimValue();}
+       if(getFanInGateV(1)->isInv()) sim1 =~(getFanInGate(1) -> getsimValue());
+       else {sim1 = getFanInGate(1) -> getsimValue();}
+       _simValue = sim0 & sim1;
+       _SimValue.set(_simValue);
        return _simValue;
    }
    virtual GateType getGateType() const {return AIG;}
@@ -211,7 +213,7 @@ public:
       _simValue = pattern;
       _SimValue.set(_simValue);
    }
-   virtual int simulate() {
+   virtual size_t simulate() {
       return _simValue;
    }
    virtual GateType getGateType() const {return PI;} 
@@ -236,7 +238,7 @@ public:
       }
    } 
    virtual GateType getGateType()const {return PO;}
-   virtual int simulate() {
+   virtual size_t simulate() {
       if(getFanInGateV(0)->isInv()) { 
          _simValue = ~(getFanInGate(0) -> getsimValue()); 
       } else {
@@ -261,7 +263,7 @@ public:
       cout<<"CONST0"; 
    }
    virtual GateType getGateType() const {return CONST;} 
-   virtual int simulate() { return 0; }
+   virtual size_t simulate() { return 0; }
 protected:
 };
 
@@ -277,7 +279,7 @@ public:
       cout<<"UNDEF"; 
    }
    virtual GateType getGateType() const {return UNDEF;}
-   virtual int simulate() { return 0; }
+   virtual size_t simulate() { return 0; }
 protected:
 };
 #endif // CIR_GATE_H

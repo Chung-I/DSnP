@@ -1,0 +1,4 @@
+cirr tests.fraig/sim12.aag
+cirsimulate -File tests.fraig/pattern.12
+cirp -FEC
+q -f

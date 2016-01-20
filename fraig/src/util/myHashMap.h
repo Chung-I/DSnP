@@ -36,6 +36,9 @@ using namespace std;
      _simValue = val._simValue;
      return (*this);
    }
+   SimValue operator ~() {
+     return SimValue(~_simValue);
+   }
       void set(size_t v) {_simValue = v; }
    private:
       size_t _simValue;

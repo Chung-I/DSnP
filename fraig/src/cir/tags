@@ -24,7 +24,6 @@ CIR_MGR_H	cirMgr.h	10;"	d
 CONST	cirDef.h	/^   CONST,$/;"	e	enum:GateType
 CirCmdState	cirCmd.cpp	/^enum CirCmdState$/;"	g	file:
 CirFraigCmd	cirCmd.h	/^CmdClass(CirFraigCmd);$/;"	v
-CirGate	cirGate.h	/^   CirGate() {}$/;"	f	class:CirGate
 CirGate	cirGate.h	/^   CirGate(unsigned id): _gateID(id), _visit(_classVisit),_simValue(0), _SimValue(SimValue(0)){}$/;"	f	class:CirGate
 CirGate	cirGate.h	/^   CirGate(unsigned id,int No): _gateID(id),_lineNo(No),_visit(_classVisit),_wiringGate(new GateV(0,0,0)),_invWiringGate(new GateV(0,0,0)),_simValue(0),_SimValue(SimValue(0)) {$/;"	f	class:CirGate
 CirGate	cirGate.h	/^class CirGate$/;"	c
@@ -39,6 +38,7 @@ CirSimCmd	cirCmd.h	/^CmdClass(CirSimCmd);$/;"	v
 CirStrashCmd	cirCmd.h	/^CmdClass(CirStrashCmd);$/;"	v
 CirSweepCmd	cirCmd.h	/^CmdClass(CirSweepCmd);$/;"	v
 CirWriteCmd	cirCmd.h	/^CmdClass(CirWriteCmd);$/;"	v
+CollectValidFecGrp	cirSim.cpp	/^CirMgr::CollectValidFecGrp(HashMap<SimValue, FecGroup>& newFecGrps,int grpId) {$/;"	f	class:CirMgr
 ConstGate	cirGate.h	/^   ConstGate(): CirGate(0,0){_SimValue.set(0);}$/;"	f	class:ConstGate
 ConstGate	cirGate.h	/^class ConstGate: public CirGate$/;"	c
 DFS	cirMgr.cpp	/^CirMgr::DFS(CirGate* thisGate,DFSFunc dfsFunc) $/;"	f	class:CirMgr
@@ -51,10 +51,10 @@ DUMMY	cirDef.h	/^   DUMMY$/;"	e	enum:GateType
 DUMMY_END	cirMgr.cpp	/^   DUMMY_END$/;"	e	enum:CirParseError	file:
 EXTRA_SPACE	cirMgr.cpp	/^   EXTRA_SPACE,$/;"	e	enum:CirParseError	file:
 FANIN_SIZE	cirDef.h	21;"	d
-FecGroup	cirDef.h	/^typedef vector<CirGate*>   FecGroup; $/;"	t
+FecGroup	cirDef.h	/^typedef vector<unsigned>   FecGroup; $/;"	t
 GateList	cirDef.h	/^typedef vector<CirGate*>   GateList; $/;"	t
 GateType	cirDef.h	/^enum GateType {$/;"	g
-GateV	cirGate.h	/^   GateV(CirGate* g, size_t phase,unsigned id):$/;"	f	class:CirGate::GateV
+GateV	cirGate.h	/^   GateV(CirGate* g, bool phase,unsigned id):$/;"	f	class:CirGate::GateV
 GateV	cirGate.h	/^class GateV {$/;"	c	class:CirGate
 ILLEGAL_IDENTIFIER	cirMgr.cpp	/^   ILLEGAL_IDENTIFIER,$/;"	e	enum:CirParseError	file:
 ILLEGAL_NUM	cirMgr.cpp	/^   ILLEGAL_NUM,$/;"	e	enum:CirParseError	file:
@@ -67,7 +67,7 @@ MISSING_IDENTIFIER	cirMgr.cpp	/^   MISSING_IDENTIFIER,$/;"	e	enum:CirParseError	
 MISSING_NEWLINE	cirMgr.cpp	/^   MISSING_NEWLINE,$/;"	e	enum:CirParseError	file:
 MISSING_NUM	cirMgr.cpp	/^   MISSING_NUM,$/;"	e	enum:CirParseError	file:
 MISSING_SPACE	cirMgr.cpp	/^   MISSING_SPACE,$/;"	e	enum:CirParseError	file:
-NEG	cirGate.h	34;"	d
+NEG	cirGate.h	35;"	d
 NUM_TOO_BIG	cirMgr.cpp	/^   NUM_TOO_BIG,$/;"	e	enum:CirParseError	file:
 NUM_TOO_SMALL	cirMgr.cpp	/^   NUM_TOO_SMALL,$/;"	e	enum:CirParseError	file:
 PI	cirDef.h	/^   PI,$/;"	e	enum:GateType
@@ -82,6 +82,7 @@ REDEF_SYMBOLIC_NAME	cirMgr.cpp	/^   REDEF_SYMBOLIC_NAME,$/;"	e	enum:CirParseErro
 UNDEF	cirDef.h	/^   UNDEF,$/;"	e	enum:GateType
 UndefGate	cirGate.h	/^   UndefGate(unsigned id,int No): CirGate(id,No){ _SimValue.set(0); }$/;"	f	class:UndefGate
 UndefGate	cirGate.h	/^class UndefGate: public CirGate$/;"	c
+_FECs	cirGate.h	/^   FecGroup         _FECs;$/;"	m	class:CirGate
 _SimValue	cirGate.h	/^   SimValue         _SimValue;$/;"	m	class:CirGate
 _aigList	cirMgr.h	/^  vector<unsigned>    _aigList;$/;"	m	class:CirMgr
 _classVisit	cirGate.cpp	/^size_t CirGate::_classVisit = 0;$/;"	m	class:CirGate	file:
@@ -89,8 +90,8 @@ _classVisit	cirGate.h	/^   static size_t    _classVisit;$/;"	m	class:CirGate
 _dfsList	cirMgr.h	/^  vector<unsigned>    _dfsList;$/;"	m	class:CirMgr
 _faninList	cirGate.h	/^   vector<GateV*>    _faninList;$/;"	m	class:CirGate
 _fanoutList	cirGate.h	/^   vector<GateV*>    _fanoutList;$/;"	m	class:CirGate
-_fecGates	cirMgr.h	/^   vector<CirGate*>   _fecGates;   $/;"	m	class:CirMgr
-_fecGrps	cirMgr.h	/^  HashMap<SimValue,FecGroup> _fecGrps;$/;"	m	class:CirMgr
+_fecGates	cirMgr.h	/^   vector<unsigned>   _fecGates;   $/;"	m	class:CirMgr
+_fecGrps	cirMgr.h	/^  vector<vector<unsigned> > _fecGrps;$/;"	m	class:CirMgr
 _fltGates	cirMgr.h	/^  vector<unsigned>    _fltGates;$/;"	m	class:CirMgr
 _gateID	cirGate.h	/^   unsigned         _gateID;$/;"	m	class:CirGate
 _gateId	cirGate.h	/^   mutable unsigned   _gateId;$/;"	m	class:CirGate::GateV
@@ -98,14 +99,15 @@ _gateName	cirGate.h	/^   string           _gateName;$/;"	m	class:CirGate
 _gateV	cirGate.h	/^   mutable size_t     _gateV;$/;"	m	class:CirGate::GateV
 _invWiringGate	cirGate.h	/^   GateV*           _invWiringGate;$/;"	m	class:CirGate
 _lineNo	cirGate.h	/^   int              _lineNo;$/;"	m	class:CirGate
-_maxGateId	cirMgr.h	/^   int        _maxGateId;$/;"	m	class:CirMgr
+_maxGateId	cirMgr.h	/^  int                 _maxGateId;$/;"	m	class:CirMgr
 _piList	cirMgr.h	/^  vector<unsigned>    _piList;$/;"	m	class:CirMgr
 _poList	cirMgr.h	/^  vector<unsigned>    _poList;$/;"	m	class:CirMgr
 _simLog	cirMgr.h	/^   ofstream   *_simLog;$/;"	m	class:CirMgr
 _simValue	cirGate.h	/^   int              _simValue;$/;"	m	class:CirGate
 _totalList	cirMgr.h	/^   vector<CirGate*>   _totalList;   $/;"	m	class:CirMgr
 _unusedGates	cirMgr.h	/^  vector<unsigned>    _unusedGates;$/;"	m	class:CirMgr
-_updateDfsListFlag	cirMgr.h	/^   bool _updateDfsListFlag;$/;"	m	class:CirMgr
+_updateDfsListFlag	cirMgr.h	/^  bool                _updateDfsListFlag;$/;"	m	class:CirMgr
+_var	cirGate.h	/^   Var              _var;$/;"	m	class:CirGate
 _visit	cirGate.h	/^   mutable size_t   _visit;$/;"	m	class:CirGate
 _wiringGate	cirGate.h	/^   GateV*           _wiringGate;$/;"	m	class:CirGate
 addFanInList	cirGate.h	/^   void addFanInList(CirGate* inGate,bool phase) {_faninList.push_back(inGate -> getWiringGate(phase)); }$/;"	f	class:CirGate
@@ -125,7 +127,7 @@ curCmd	cirCmd.cpp	/^static CirCmdState curCmd = CIRINIT;$/;"	v	file:
 cutoffFanInWiring	cirGate.cpp	/^void CirGate::cutoffFanInWiring () {$/;"	f	class:CirGate
 cutoffFanOutWiring	cirGate.cpp	/^void CirGate::cutoffFanOutWiring () {$/;"	f	class:CirGate
 detectFecGrps	cirSim.cpp	/^CirMgr::detectFecGrps() {$/;"	f	class:CirMgr
-dfsNum	cirMgr.h	/^   mutable int   dfsNum;$/;"	m	class:CirMgr
+dfsNum	cirMgr.h	/^  mutable int         dfsNum;$/;"	m	class:CirMgr
 dfsVisit	cirMgr.cpp	/^CirMgr::dfsVisit() $/;"	f	class:CirMgr
 eraseFanInGate	cirGate.h	/^   void eraseFanInGate(CirGate* eraseGate) {$/;"	f	class:CirGate
 eraseFanOutGate	cirGate.h	/^   void eraseFanOutGate(CirGate* eraseGate) {$/;"	f	class:CirGate
@@ -147,8 +149,11 @@ for_each_po_simulate	cirSim.cpp	/^CirMgr::for_each_po_simulate() {$/;"	f	class:C
 fraig	cirFraig.cpp	/^CirMgr::fraig()$/;"	f	class:CirMgr
 gate	cirGate.h	/^   CirGate* gate() const {$/;"	f	class:CirGate::GateV
 gateOptimize	cirGate.cpp	/^CirGate::gateOptimize() \/\/return true if optimization has been performed $/;"	f	class:CirGate
+gatePrintFecPair	cirGate.cpp	/^CirGate::gatePrintFecPair() const {$/;"	f	class:CirGate
 gateStrash	cirMgr.cpp	/^CirMgr::gateStrash(CirGate* toBeMerged,HashMap<HashKey,size_t >* hash)$/;"	f	class:CirMgr
-generateSignal	cirSim.cpp	/^CirMgr::generateSignal() {$/;"	f	class:CirMgr
+gateUpdateFecPair	cirGate.cpp	/^CirGate::gateUpdateFecPair(FecGroup& grp) {$/;"	f	class:CirGate
+genProofModel	cirFraig.cpp	/^CirMgr::genProofModel(SatSolver& s)$/;"	f	class:CirMgr
+getFECs	cirGate.h	/^   FecGroup getFECs() const { return _FECs; };$/;"	f	class:CirGate
 getFanInGate	cirGate.h	/^   CirGate* getFanInGate(int i) const {return _faninList[i] -> gate();}$/;"	f	class:CirGate
 getFanInGateV	cirGate.h	/^   GateV* getFanInGateV(int i) const {return _faninList[i];}$/;"	f	class:CirGate
 getFanInSize	cirGate.h	/^   unsigned getFanInSize()const {return _faninList.size();}$/;"	f	class:CirGate
@@ -174,9 +179,10 @@ getTypeStr	cirGate.h	/^   virtual string getTypeStr() const { return "PO";}$/;"	
 getTypeStr	cirGate.h	/^   virtual string getTypeStr() const {return "CONST";}$/;"	f	class:ConstGate
 getTypeStr	cirGate.h	/^   virtual string getTypeStr() const {return "UNDEF";}$/;"	f	class:UndefGate
 getTypeStr	cirGate.h	/^   virtual string getTypeStr() const {return "cirGate";};$/;"	f	class:CirGate
+getVar	cirGate.h	/^   Var getVar() const { return _var; }$/;"	f	class:CirGate
 getWiringGate	cirGate.h	/^   GateV* getWiringGate(bool phase) {$/;"	f	class:CirGate
 getWiringId	cirGate.h	/^   size_t getWiringId() { return 2*_gateId+isInv(); }$/;"	f	class:CirGate::GateV
-getsimValue	cirGate.h	/^   int getsimValue() const {return _simValue; }$/;"	f	class:CirGate
+getsimValue	cirGate.h	/^   size_t getsimValue() const {return _simValue; }$/;"	f	class:CirGate
 help	cirCmd.cpp	/^CirFraigCmd::help() const$/;"	f	class:CirFraigCmd
 help	cirCmd.cpp	/^CirGateCmd::help() const$/;"	f	class:CirGateCmd
 help	cirCmd.cpp	/^CirOptCmd::help() const$/;"	f	class:CirOptCmd
@@ -190,9 +196,11 @@ initCirCmd	cirCmd.cpp	/^initCirCmd()$/;"	f
 isAig	cirGate.h	/^   virtual bool isAig() const { return false; }$/;"	f	class:CirGate
 isInv	cirGate.h	/^   bool isInv() const { return (_gateV & NEG); }$/;"	f	class:CirGate::GateV
 lineNo	cirMgr.cpp	/^static unsigned lineNo = 0;  \/\/ in printint, lineNo needs to ++$/;"	v	file:
+loadRandSignal	cirSim.cpp	/^CirMgr::loadRandSignal() {$/;"	f	class:CirMgr
+loadSignal	cirSim.cpp	/^CirMgr::loadSignal(vector<size_t>& signals) {$/;"	f	class:CirMgr
 merge	cirMgr.cpp	/^CirMgr::merge(CirGate* mergeGate,CirGate* toBeMerged ) {$/;"	f	class:CirMgr
-mysimulate	cirGate.h	/^   virtual bool mysimulate() {$/;"	f	class:CirGate
 optimize	cirOpt.cpp	/^CirMgr::optimize()$/;"	f	class:CirMgr
+packSim2size_t	cirSim.cpp	/^CirMgr::packSim2size_t(vector<string>& rawPatternStr,vector<size_t>& filePattern) {$/;"	f	class:CirMgr
 parseError	cirMgr.cpp	/^parseError(CirParseError err)$/;"	f	file:
 preOrderTraverse	cirMgr.cpp	/^CirMgr::preOrderTraverse()$/;"	f	class:CirMgr
 printFECPairs	cirMgr.cpp	/^CirMgr::printFECPairs() const$/;"	f	class:CirMgr
@@ -207,11 +215,14 @@ printGateName	cirGate.h	/^   virtual void printGateName() const {$/;"	f	class:Ci
 printNetlist	cirMgr.cpp	/^CirMgr::printNetlist() const$/;"	f	class:CirMgr
 printPIs	cirMgr.cpp	/^CirMgr::printPIs() const$/;"	f	class:CirMgr
 printPOs	cirMgr.cpp	/^CirMgr::printPOs() const$/;"	f	class:CirMgr
+printPatternSimulated	cirSim.cpp	/^CirMgr::printPatternSimulated(int numOfPattern) const {$/;"	f	class:CirMgr
 printSummary	cirMgr.cpp	/^CirMgr::printSummary() const$/;"	f	class:CirMgr
+prove	cirFraig.cpp	/^CirMgr::prove(SatSolver& solver) {$/;"	f	class:CirMgr
 randomSim	cirSim.cpp	/^CirMgr::randomSim()$/;"	f	class:CirMgr
 reWireFanIn	cirGate.cpp	/^void CirGate::reWireFanIn () {$/;"	f	class:CirGate
 reWireFanOut	cirGate.cpp	/^void CirGate::reWireFanOut () {$/;"	f	class:CirGate
 readCircuit	cirMgr.cpp	/^CirMgr::readCircuit(const string& fileName)$/;"	f	class:CirMgr
+readSimFile	cirSim.cpp	/^CirMgr::readSimFile(ifstream& patternFile,vector<string>& fileSimLines) const$/;"	f	class:CirMgr
 receiveSignal	cirGate.h	/^   void receiveSignal(int pattern) {$/;"	f	class:PiGate
 replaceByConst0	cirGate.cpp	/^CirGate::replaceByConst0(bool in)$/;"	f	class:CirGate
 replaceByFanin	cirGate.cpp	/^CirGate::replaceByFanin(int in)$/;"	f	class:CirGate
@@ -221,18 +232,20 @@ reportGate	cirGate.cpp	/^CirGate::reportGate() const$/;"	f	class:CirGate
 resetGateVisit	cirGate.h	/^   void resetGateVisit() {_visit = _classVisit; }$/;"	f	class:CirGate
 resetVisit	cirMgr.cpp	/^CirMgr::resetVisit() const$/;"	f	class:CirMgr
 setGateName	cirGate.h	/^   void setGateName(string name) {_gateName = name;}$/;"	f	class:CirGate
-setGateV	cirGate.h	/^   void setGateV(CirGate* g,size_t phase,unsigned id) {$/;"	f	class:CirGate::GateV
+setGateV	cirGate.h	/^   void setGateV(CirGate* g,bool phase,unsigned id) {$/;"	f	class:CirGate::GateV
 setInv	cirGate.h	/^   void setInv(bool phase) {_gateV = size_t((_gateV & ~size_t(NEG))+phase);}$/;"	f	class:CirGate::GateV
 setSimLog	cirMgr.h	/^   void setSimLog(ofstream *logFile) { _simLog = logFile; }$/;"	f	class:CirMgr
-simulate	cirGate.h	/^   virtual int simulate() { return 0; }$/;"	f	class:ConstGate
-simulate	cirGate.h	/^   virtual int simulate() { return 0; }$/;"	f	class:UndefGate
-simulate	cirGate.h	/^   virtual int simulate() {$/;"	f	class:AigGate
-simulate	cirGate.h	/^   virtual int simulate() {$/;"	f	class:PiGate
-simulate	cirGate.h	/^   virtual int simulate() {$/;"	f	class:PoGate
+setVar	cirGate.h	/^   void setVar(const Var& v) { _var = v; } $/;"	f	class:CirGate
+simulate	cirGate.h	/^   virtual size_t simulate() { return 0; }$/;"	f	class:ConstGate
+simulate	cirGate.h	/^   virtual size_t simulate() { return 0; }$/;"	f	class:UndefGate
+simulate	cirGate.h	/^   virtual size_t simulate() {$/;"	f	class:AigGate
+simulate	cirGate.h	/^   virtual size_t simulate() {$/;"	f	class:PiGate
+simulate	cirGate.h	/^   virtual size_t simulate() {$/;"	f	class:PoGate
 strash	cirFraig.cpp	/^CirMgr::strash()$/;"	f	class:CirMgr
 swapFanIn	cirGate.h	/^   void swapFanIn(){$/;"	f	class:CirGate
 sweep	cirOpt.cpp	/^CirMgr::sweep()$/;"	f	class:CirMgr
 updateDfsList	cirMgr.cpp	/^CirMgr::updateDfsList() $/;"	f	class:CirMgr
+updateFecPair	cirSim.cpp	/^CirMgr::updateFecPair() {$/;"	f	class:CirMgr
 usage	cirCmd.cpp	/^CirFraigCmd::usage(ostream& os) const$/;"	f	class:CirFraigCmd
 usage	cirCmd.cpp	/^CirGateCmd::usage(ostream& os) const$/;"	f	class:CirGateCmd
 usage	cirCmd.cpp	/^CirOptCmd::usage(ostream& os) const$/;"	f	class:CirOptCmd
@@ -247,4 +260,4 @@ visited	cirGate.h	/^   virtual bool visited() const {$/;"	f	class:CirGate
 writeAag	cirMgr.cpp	/^CirMgr::writeAag(ostream& outfile) const$/;"	f	class:CirMgr
 writeGate	cirMgr.cpp	/^CirMgr::writeGate(ostream& outfile, CirGate *g) const$/;"	f	class:CirMgr
 ~CirGate	cirGate.h	/^   virtual ~CirGate() {}$/;"	f	class:CirGate
-~CirMgr	cirMgr.h	/^   ~CirMgr() {} $/;"	f	class:CirMgr
+~CirMgr	cirMgr.h	/^     ~CirMgr() {} $/;"	f	class:CirMgr

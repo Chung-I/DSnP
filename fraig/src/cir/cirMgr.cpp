@@ -157,7 +157,7 @@ CirMgr::readCircuit(const string& fileName)
    ifstream ifs(fileName.c_str());
    int temp;
    int* MILOA = new int[5];
-   int lineNo = 1;   //record line number, later store in CirGate data member _lineNo
+   int lineNo = 2;   //record line number, later store in CirGate data member _lineNo
    string s;
    if(!ifs.is_open()) {
       ifs.close(); 
@@ -293,13 +293,11 @@ CirMgr::readCircuit(const string& fileName)
   // std::sort(_piList.begin(),_piList.end());
   // std::sort(_poList.begin(),_poList.end());
   // std::sort(_aigList.begin(),_aigList.end());
-   _fecGates.push_back(_totalList[0]);
+   _fecGates.push_back(0);
    for(int i=0;i<(int)_dfsList.size();i++) {
       if(getGate(_dfsList[i])-> getGateType() == AIG)
-      _fecGates.push_back(getGate(_dfsList[i]));
+      _fecGates.push_back(2*_dfsList[i]);
    }
-   _fecGrps.init(1.6*(_dfsList.size()));
-   _fecGrps.insert(_fecGates[0]->getSimValue(),_fecGates);
    for(int i=0;i<MILOA[4];i++) delete [] andGateWiring[i];
    delete [] andGateWiring;
    delete [] MILOA;
@@ -394,6 +392,15 @@ CirMgr::printFloatGates() const
 void
 CirMgr::printFECPairs() const
 {
+   for(int grp = 0;grp<(int)_fecGrps.size();++grp) {
+      cout<<"["<<grp<<"]";
+      for(int gt=0;gt<_fecGrps[grp].size();++gt) {
+         cout<<" "<<(_fecGrps[grp][gt]%2 ? "!" : "")
+         <<_fecGrps[grp][gt]/2;
+      }
+      cout<<endl;
+   }
+   
 }
 
 void
@@ -599,6 +606,8 @@ CirMgr::merge(CirGate* mergeGate,CirGate* toBeMerged ) {
       eraseGate(toBeMerged);
    }
 }
+
+
 
 void
 CirMgr::gateStrash(CirGate* toBeMerged,HashMap<HashKey,size_t >* hash)

@@ -21,6 +21,7 @@ using namespace std;
 #include "cirDef.h"
 #include "cirGate.h"
 #include "myHashMap.h"
+#include "sat.h"
 extern CirMgr *cirMgr;
 enum DFSFunc {
    DFSAig,
@@ -72,17 +73,18 @@ public:
 private:
    ofstream   *_simLog;
    vector<CirGate*>   _totalList;   
-   vector<CirGate*>   _fecGates;   
+   vector<unsigned>   _fecGates;   
   vector<unsigned>    _fltGates;
   vector<unsigned>    _unusedGates;
   vector<unsigned>    _piList;
   vector<unsigned>    _poList;
   vector<unsigned>    _aigList;
   vector<unsigned>    _dfsList;
-  HashMap<SimValue,FecGroup> _fecGrps;
-   bool _updateDfsListFlag;
-   mutable int   dfsNum;
-   int        _maxGateId;
+  vector<vector<unsigned> > _fecGrps;
+  bool                _updateDfsListFlag;
+  mutable int         dfsNum;
+  int                 _maxGateId;
+    
 
    void DFS(CirGate*, DFSFunc dfsFunc); 
    void updateDfsList();
@@ -96,9 +98,21 @@ private:
    void merge(CirGate* ,CirGate*);
    void gateStrash(CirGate* ,HashMap<HashKey, size_t >*);
    bool checkInv(CirGate*,CirGate*);
-   void generateSignal();
+   
+   // Private Member functions about simulation
+   void loadSignal(vector<size_t>&);
+   void loadRandSignal();
    void for_each_po_simulate();
-   void detectFecGrps();
-};
+   bool detectFecGrps();
+   void CollectValidFecGrp(HashMap<SimValue, FecGroup>&,int );
+   void updateFecPair();
+   void printPatternSimulated(int ) const;
+   bool readSimFile(ifstream&,vector<string>&) const;
+   void packSim2size_t(vector<string>&,vector<size_t>&);
 
+   // Member functions about fraig
+   void genProofModel(SatSolver&); 
+   void prove(SatSolver&);
+   void fraigMerge(size_t ,size_t);
+};
 #endif // CIR_MGR_H

@@ -48,6 +48,9 @@ CirGate::reportGate() const
    cout<<"= "<<getTypeStr()<<"("<<_gateID<<")"
       <<(_gateName.size() ? "\"": "")<<_gateName<<(_gateName.size() ? "\"": "")
       <<", "<<"line "<<_lineNo<<setw(37-width)<<"="<<endl;
+   cout<<"= FECs:";
+   gatePrintFecPair();
+   cout<<setw(41-2*(_FECs.size()))<<"="<<endl;
    cout<<"= Value: "<<this->getSimValueString()<<" ="<<endl;
    cout<<"=================================================="<<endl;
 }
@@ -186,16 +189,19 @@ void CirGate::cutoffFanInWiring () {
       getFanInGate(in) -> eraseFanOutGate(this);
    }
 }
+
 void CirGate::reWireFanIn () {
    for(int in=0;in<(int)getFanInSize();in++) {
       getFanInGate(in) -> eraseFanOutGate(this);
    }
 }
+
 void CirGate::reWireFanOut () {
    for(int in=0;in<(int)getFanInSize();in++) {
       getFanInGate(in) -> eraseFanOutGate(this);
    }
 }
+
 string
 CirGate::getSimValueString() const {
   bitset<32> sim(_simValue);
@@ -204,4 +210,17 @@ CirGate::getSimValueString() const {
      simString.insert(i,1,'_');
   }
   return simString;
+}
+
+void
+CirGate::gatePrintFecPair() const {
+   for(int i=0;i<(int)_FECs.size();i++) cout<<" "<<(_FECs[i]%2 ?"!" : "")<<_FECs[i]/2;
+}
+
+void
+CirGate::gateUpdateFecPair(FecGroup& grp) {
+   _FECs = grp;
+   for(int i=0;i<(int)_FECs.size();i++) {
+      if((_FECs[i]/2) == getGateId()) { _FECs.erase(_FECs.begin()+i); break; }
+   }
 }

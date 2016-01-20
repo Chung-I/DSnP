@@ -19,7 +19,7 @@ class CirGate;
 class CirMgr;
 class SatSolver;
 #define FANIN_SIZE  2
-typedef vector<CirGate*>   FecGroup; 
+typedef vector<unsigned>   FecGroup; 
 typedef vector<CirGate*>   GateList; 
 enum GateType {
    CIR,
