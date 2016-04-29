@@ -140,6 +140,7 @@ class MemRecycleList
    void reset() {
       // TODO
 	T* _current = _first;
+        if(_current == 0) return;
 	while(getNext(_current))
 	{
 		T* _temp = _current;
@@ -217,6 +218,7 @@ public:
 		delete _activeBlock;
 		_activeBlock = new MemBlock<T>(0,b);
 	}
+        _blockSize = b;
    }
    // Called by new
    T* alloc(size_t t) {
