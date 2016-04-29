@@ -10,12 +10,9 @@
 #define BST_H
 
 #include <cassert>
-
 using namespace std;
-
+static const size_t MASK = -2;
 template <class T> class BSTree;
-#define LEFT  1
-#define RIGHT  2
 // BSTreeNode is supposed to be a private class. User don't need to see it.
 // Only BSTree and BSTree::iterator can access it.
 //
@@ -27,12 +24,27 @@ class BSTreeNode
    // TODO: design your own class!!
    friend class BSTree<T>;
    friend class BSTree<T>::iterator;
-   BSTreeNode(const T& d, BSTreeNode<T>* l = 0, BSTreeNode<T>* r = 0):
+   BSTreeNode(const T& d, size_t l = 0, size_t r = 0):
       _data(d), _left(l), _right(r) {}
-
-   T   _data;
-   BSTreeNode<T>*   _left;
-   BSTreeNode<T>*   _right;
+   BSTreeNode<T>* getLeftPtr ()    { return (BSTreeNode<T>*)(_left  & MASK); }
+   BSTreeNode<T>* getRightPtr ()   { return (BSTreeNode<T>*)(_right & MASK); }
+   BSTreeNode<T>* getLeftChild ()  { return (hasLeftChild()  ? 
+      (BSTreeNode<T>*)(_left) : 0);  }
+   BSTreeNode<T>* getRightChild () { return (hasRightChild() ? (BSTreeNode<T>*)(_right) : 0); }
+   void setLeftChild  ( BSTreeNode<T>* l ) {  _left = (size_t)l; }
+   void setRightChild ( BSTreeNode<T>* r ) { _right = (size_t)r; }
+   void setLeftThread  ( BSTreeNode<T>* l ) {  _left = (size_t)l; setLeftFlag(true); }
+   void setRightThread ( BSTreeNode<T>* r ) { _right = (size_t)r; setRightFlag(true);}
+   bool hasLeftChild ()  { return !(_left & 1);  }
+   bool hasRightChild () { return !(_right & 1); }
+   void setLeftFlag (bool l)  { _left  |= l; }   // if l = true, set thread flag
+   void setRightFlag (bool r) { _right |= r; }   // if r = true, set thread flag
+   const T& getData () {return _data; }
+   void setData(T d) { _data = d; }
+   bool isLeaf() { return (!hasLeftChild()) && (!hasRightChild()); }
+   T        _data;
+   size_t   _left;
+   size_t   _right;
 };
 
 
@@ -41,75 +53,59 @@ class BSTree
 {
    // TODO: design your own class!!
 public:
-   BSTree(): _root(0), _tail(0) {}
-   ~BSTree() { clear(); delete _tail; delete _root; }
+   BSTree() {
+      _head = new BSTreeNode<T>(T("dummyz"));
+      _head ->setLeftThread(_head);
+      _head ->setRightThread(_head);
+   }
+   ~BSTree() { clear(); delete _head; }
 
    class iterator { 
       friend class BSTree;
 
    public:
-      class oneTrace
-      {
-         friend class iterator;
-
-         oneTrace(BSTreeNode<T>* node, int direc):
-            _traceNode(node), _direction(direc) {}
-
-         BSTreeNode<T>* _traceNode;
-         int _direction;
-      };
 
       iterator(BSTreeNode<T>* node): _node(node) {}
-      iterator(const iterator& i): _node(i._node), _trace(i._trace) {}
+      iterator(const iterator& i): _node(i._node) {}
       ~iterator() {}
       
       const T& operator * () const {
-         T temp = _node -> _data;
-         return  temp;
+        return _node -> _data;
       }
       T& operator * () { return _node -> _data; }
       iterator& operator ++ () {
-         iterator temp = *(this);
-         if(_node -> _right == NULL) {
-            while(1) {
-               int direc = backToParent();
-               if(direc == LEFT)  return *(this); 
-               if(direc == RIGHT)   continue;
-               if(direc == 0)   *(this) = temp;   this -> moveToChild(RIGHT);   return *(this);
+         if(!_node -> hasRightChild()) _node = _node -> getRightPtr();
+         else {
+            _node = _node -> getRightPtr();
+            while(_node -> hasLeftChild()) {
+               _node = _node -> getLeftPtr();
             }
          }
-         this -> moveToChild(RIGHT);
-         this -> toMin();
          return *(this);
       }
       iterator operator ++ (int) {
-         iterator temp = *(this);
+         iterator rev = *(this);
          ++(*this);
-         return temp;
+         return rev;
       } 
       iterator& operator -- () {
-         iterator temp = *(this);
-         if(_node -> _left == NULL) {
-            while(1) {
-               int direc = backToParent();
-               if(direc == LEFT)  continue; 
-               if(direc == RIGHT)   return *(this);
-               if(direc == 0)   *(this) = temp; return *(this);
+         if(!_node -> hasLeftChild()) _node = _node -> getLeftPtr();
+         else {
+            _node = _node -> getLeftPtr();
+            while(_node -> hasRightChild()) {
+               _node = _node -> getRightPtr();
             }
          }
-         this -> moveToChild(LEFT);
-         this -> toMax();
          return *(this);
       }
       iterator operator -- (int) {
-         iterator temp = *(this);
+         iterator rev = *(this);
          --(*this);
-         return temp;
+         return rev;
       }
       iterator& operator = (const iterator& i) {
-        _node = i._node;
-        _trace = i._trace; 
-        return *(this);
+         _node = i._node;
+         return *(this);
       }
       bool operator != (const iterator& i) const {
          if(_node != i._node)   return true;
@@ -119,271 +115,152 @@ public:
          if(_node == i._node)   return true;
          return false;  
       }
-      void moveToChild (int direc) {
-         if(direc == LEFT) { 
-               _trace.push_back(new oneTrace(_node,LEFT));
-               _node = _node -> _left;
-               return ;
-         }
-         else if(direc == RIGHT) {
-               _trace.push_back(new oneTrace(_node,RIGHT));
-               _node = _node -> _right;
-               return ;
-         }
-      }
-      BSTreeNode<T>*& getChild (int direc) {
-         if(direc == LEFT) return _node -> _left;
-         if(direc == RIGHT) return _node -> _right;
-         return _node;
-      }
-      int backToParent () { //return 0 if no parent(root); return 1 if left child itself; return 2 if right child itself
-         oneTrace* temp;
-         temp = pop_trace();
-         if(temp == 0 ) return 0;
-         _node = temp -> _traceNode;
-         return temp -> _direction;
-      }
-      BSTreeNode<T>* getParent() const {
-         if(_trace.empty()) return NULL;
-         return _trace.back() -> _traceNode;
-      }
-      int countChild() const {
-         if(_node -> _left == NULL && _node -> _right == NULL)   return 0;
-         if(_node -> _left != NULL && _node -> _right == NULL)   return LEFT;
-         if(_node -> _left == NULL && _node -> _right != NULL)   return RIGHT;
-         if(_node -> _left != NULL && _node -> _right != NULL)   return 3;
-         return 0; 
-         
-      }
    private: 
       BSTreeNode<T>*   _node;
-      void toMin () {
-         while(getChild(LEFT) != NULL) moveToChild(LEFT);
-      }
-      void toMax () {
-         while(getChild(RIGHT) != NULL)   moveToChild(RIGHT);
-      }
-      vector<oneTrace*> _trace;
-      oneTrace* pop_trace() { 
-         if(_trace.empty() ) return NULL;  
-         oneTrace* temp = _trace.back(); 
-         _trace.pop_back();
-         return temp;
-      }
+      //iterator parent() {
+      //   if(this -> _node -> isLeaf()) { 
+      //      if(this -> _node -> isLeft)
+      //   }
+      //}
    };
 
    iterator begin() const {
-      if(_root == NULL)   return end();
-      iterator findBegin(_root);
-      while(findBegin.getChild(LEFT) != NULL) { findBegin.moveToChild(LEFT); }
-      return findBegin;
+      BSTreeNode<T>* b = _head;
+      if(empty()) return end();
+      else {
+         b  = b -> getLeftPtr();
+         while(b -> hasLeftChild()) { b = b -> getLeftPtr();}
+      }
+      return iterator(b);
    }
    iterator end() const {
-      if(_root == NULL)   return iterator(_root);
-      iterator findEnd(_root);
-      while(findEnd.getChild(RIGHT) != NULL) { findEnd.moveToChild(RIGHT); }
-      return findEnd;
+      return iterator(_head);
    }
    void pop_front() {
-      erase(begin());
    }
    void pop_back() {
-      erase(--end());
    }
    bool erase(iterator pos) {
-      size_t size = this -> size();
-      if(empty()) {return false; }
-         if(_tail != NULL) {
-         iterator cleanTail(_root);
-         cleanTail.toMax();
-         int direc = cleanTail.backToParent();
-         delete _tail;
-         cleanTail.getChild(direc) = 0;
-         _tail = 0;
+      if(pos._node == _head) return false;
+      iterator it = pos;
+      BSTreeNode<T>* curr = it._node;
+      iterator itit = it;
+      BSTreeNode<T>* prev = (--it)._node;
+      BSTreeNode<T>* next = (++itit)._node;
+      if(pos._node -> isLeaf()) {
+         if( curr -> getRightPtr() -> getLeftPtr() == curr ) {
+         next -> setLeftThread(prev); }
+         else { prev -> setRightThread(next); }
+         delete curr;
       }
-      if(size > 1) {
-         if(!traverse(pos))   return false;
-         eraseNode(pos);
+    //  else if(pos._node -> hasLeftChild() && !(pos._node -> hasRightChild()) ) {
+    //     next -> setLeftChild(curr -> getLeftChild());
+    //     prev -> setRightThread(next);
+    //     delete curr;
+    //  }
+    //  else if(pos._node -> hasRightChild() && !(pos._node -> hasLeftChild()) ) {
+    //     if(prev != _head) prev -> setRightChild(curr -> getRightChild());
+    //     next -> setLeftThread(prev);
+    //     delete curr;
+    //  }
+      else if(pos._node -> hasLeftChild()) {
+         pos._node -> setData(prev -> getData());
+         erase(iterator(prev));
       }
       else {
-         if(pos._node == _root) { 
-            delete _root;   
-            _root = 0;
-         }
-         else { return false; }
-      }
-
-      if(!empty()) {
-         iterator addTail(_root);
-         addTail.toMax();
-         _tail = new BSTreeNode<T>(T("DUMMY!"),NULL,NULL);
-         addTail._node -> _right = _tail;
+         pos._node -> setData(next -> getData());
+         erase(iterator(next));
       }
       return true;
    }
    bool erase(const T& x) {
-      if(_tail != NULL) {
-         iterator cleanTail(_root);
-         cleanTail.toMax();
-         int direc = cleanTail.backToParent();
-         cleanTail.getChild(direc) = 0;
-         delete _tail;
-         _tail = 0;
-      }
-
-      if(empty()) { return false; }
-      if(size() > 1) {
-         iterator eraser(_root);
-         traverse(x, eraser);
-         if(eraser._node == NULL)   return false;
-         eraseNode(eraser);
-      }
-      else {
-      if(x == _root -> _data) { delete _root; _root = 0; }
-      else { return false; }
-      }
-      if(_root != NULL) {
-         iterator addTail(_root);
-         addTail.toMax();
-         _tail = new BSTreeNode<T>(T("DUMMY!"),NULL,NULL);
-         addTail._node -> _right = _tail;
-      }
-      return true;
+      iterator it(0);
+      int era = find(x,it);
+      if(era!=0) { return false; }
+      return erase(it);   
    }
    
    bool empty() const {
-      if (_root == NULL) return true;
-      return false;      
+      return(_head -> getLeftPtr() == _head);
    }
    void insert(const T& x) {
-      if(_tail != NULL) {
-         iterator cleanTail(_root);
-         cleanTail.toMax();
-         int direc = cleanTail.backToParent();
-         delete _tail;
-         cleanTail.getChild(direc) = 0;
-         _tail = 0;
-      }
-      BSTreeNode<T>* newNode = new BSTreeNode<T>(x,NULL,NULL);
-      if(_root == NULL) {
-         _root = newNode; 
-      }
-      else {
-         iterator toInsert(_root);
-         traverse(x, toInsert);
-         if(toInsert._node == NULL) {
-            int direc = toInsert.backToParent();
-
-             if(direc == LEFT) toInsert._node -> _left = newNode;
-            else if(direc == RIGHT) toInsert._node -> _right = newNode;
-         }
-         else {
-            if(toInsert.getChild(LEFT) == NULL) { toInsert._node -> _left = newNode; }
-            else if(toInsert.getChild(RIGHT) == NULL) { toInsert._node -> _right = newNode; }
-            toInsert++;
-            if(toInsert.getChild(LEFT) == NULL) { toInsert._node -> _left = newNode; }
-            else if(toInsert.getChild(RIGHT) == NULL) { toInsert._node -> _right = newNode; }
+      iterator it(0);
+      BSTreeNode<T>* newNode = new BSTreeNode<T>(x);
+      int dir = find(x,it);
+      iterator pos = it;
+      iterator pospos = pos;
+      BSTreeNode<T>* prev = (--pos)._node;
+      BSTreeNode<T>* next = (++pospos)._node;
+      if(dir == 0) {
+         if (!(it._node -> hasLeftChild())) { dir = -1; }
+         else if(!(it._node -> hasRightChild())) { dir = 1; }
+         else if(!(prev -> hasRightChild())) { 
+            it = prev;
+            dir = 1;
+         } else if(!(next -> hasLeftChild())) { 
+            it = next;
+            dir = -1;
          }
       }
-      iterator addTail(_root);
-      addTail.toMax();
-      _tail = new BSTreeNode<T>(T("DUMMY!"),NULL,NULL);
-      addTail._node -> _right = _tail;
+      else if(dir == 1) {
+         newNode -> setLeftThread(it._node);
+         newNode -> setRightThread(it._node -> getRightPtr());
+         it._node -> setRightChild(newNode); 
+      }else if(dir == -1 ) {
+         newNode -> setRightThread(it._node);
+         newNode -> setLeftThread(it._node -> getLeftPtr());
+         it._node -> setLeftChild(newNode);
+      }
    }
    void sort() {}
    void print() {}
    void clear() { 
-      if(!empty()) {
-         clearNode(_root); 
-         _root = 0; 
-         _tail = 0; 
-      }
    }
    size_t size() {
-      size_t count = 0;
-      countSize(_root,count); 
-      --count;
-      return count;
+      size_t s = 0;
+      for(iterator b = this -> begin(), end = this -> end() ; b != end;++b) 
+         ++s;
+      return s;
    }
 private:
-   BSTreeNode<T>*   _root;
-   BSTreeNode<T>*   _tail;
-   const BSTreeNode<T>* getRoot() const {
-      return _root;
-   }
-   void traverse (T x, iterator& insert) {
-      if(insert._node == NULL || x == *insert) return ;
-      if(x < *insert) {
-         insert.moveToChild(LEFT);
-         traverse(x, insert);
+   BSTreeNode<T>*   _head;
+   int find(const T& val, iterator& it) {
+      // return 0 if data is found, and set 'it' to the node whose data is val
+      // else set 'it' to the node that can be inserted to
+      // -1 for left, 1 for right
+      BSTreeNode<T>* _current = _head;
+      int output;
+      if(empty()) {
+         it = iterator(_head);
+         return -1;
       }
-      else {
-         insert.moveToChild(RIGHT);
-         traverse(x, insert);
-      }
-   }
-   bool traverse(iterator& target) {
-      iterator traversal(_root);
-      while(traversal._node != NULL) {
-         if(*target < *traversal) {
-            traversal.moveToChild(LEFT);
+      _current = _current -> getLeftPtr();
+      while(1) {
+         if(val < _current -> getData()) {
+            if(!_current -> hasLeftChild()) {
+               output = -1; 
+               break;
+            }
+            _current = _current -> getLeftPtr();
          }
-         else if(!( (*target < *traversal) || (*target == *traversal)) ) {
-            traversal.moveToChild(RIGHT);
+         else if(val == _current -> getData()) {
+            output = 0; 
+            break;
          }
-         else if(*target == *traversal) {
-            traversal.toMin();
-            while(!(*target == *traversal))   ++traversal;
-            while(*target == *traversal && target != traversal)   ++traversal;
-            if(*target == *traversal && target == traversal)   return true;
-            return false;
-         } 
+         else {
+            if(!_current -> hasRightChild()) {
+               output = 1; 
+               break;
+            }
+            _current = _current -> getRightPtr();
+         }
       }
-      return false;
+      it = iterator(_current);
+      return output;
    }
 
-   void eraseNode(iterator& eraser) {
-      int child = eraser.countChild();
-      if(child == 0) {
-         delete eraser._node;
-         eraser._node = 0;
-         int direc = eraser.backToParent();
-         if(direc)   eraser.getChild(direc) = 0;
-      }
-      else if(child == LEFT || child == RIGHT) {
-         iterator deleteNode = eraser;
-         eraser.moveToChild(child);
-         if(child == LEFT)   eraser.toMax();
-         else if(child == RIGHT)   eraser.toMin();
-         *deleteNode = *eraser;
-         eraseNode(eraser);
-      }
-      else if(child == 3) {
-         iterator deleteNode = eraser; 
-         ++eraser; //go to successor
-         if(eraser.countChild() == 0) {
-            *deleteNode = *eraser;
-            delete eraser._node;
-            int direc = eraser.backToParent();
-            eraser.getChild(direc) = 0;
-         }
-         else if(eraser.countChild() == RIGHT) {
-            *deleteNode = *eraser;
-            eraseNode(eraser);
-         }         
-      }     
-   }          
-   void clearNode(BSTreeNode<T>* deleteNode) {
-      if(deleteNode -> _left != NULL )   clearNode(deleteNode -> _left);
-      if(deleteNode -> _right != NULL )   clearNode(deleteNode -> _right);
-      delete deleteNode;
-      deleteNode = 0;
-   }
-   void countSize(BSTreeNode<T>* countNode, size_t& size) {
-      if(countNode -> _left != NULL )   countSize(countNode -> _left,size);
-      if(countNode -> _right != NULL)   countSize(countNode -> _right, size);
-      size++;
-   }
+
+
 };
 
 #endif // BST_H
