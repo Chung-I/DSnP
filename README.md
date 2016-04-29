@@ -37,4 +37,4 @@ Build hash and heap.
 
 ##Final project
 
-implement a special circuit representation, FRAIG (Functionally Reduced And-Inverter Graph), from a circuit description file, which supports several functions: remove redundant/unused gates; merge functionally equivalent gates; perform circuit simulations to identify possible functionally equivalent gates (functionally equivalent pairs, FEC), and call the provided SAT(boolean satisfiability problem) solver to prove/disprove whether they are equivalent or not, and finally, merge those which are proven functionally equivalent.
+Implement a special circuit representation, FRAIG (Functionally Reduced And-Inverter Graph), from a circuit description file, which supports several functions: remove redundant/unused gates; merge functionally equivalent gates; perform circuit simulations to identify possible functionally equivalent gates (functionally equivalent pairs, FEC), and call the provided SAT(boolean satisfiability problem) solver to prove/disprove whether they are equivalent or not, and finally, merge those which are proven functionally equivalent.
