@@ -1,1 +1,2 @@
-to execute hw7, simply type "./taskMgr" in your terminal.
+type "make" to compile hw3.
+type "./mydb" to execute hw3 in your terminal.
