@@ -38,42 +38,50 @@ extern CirMgr *cirMgr;
 void
 CirMgr::randomSim()
 {
-   _fecGrps.push_back(_fecGates);
-   int maxFail = round(5*log(_fecGates.size()));
-   _failTime = 0;
+   for(size_t i=0;i<_noSimFlag.size();i++) _noSimFlag[i] = 0;
+   int failTime = 0;
+   int maxFail = round(30*log(_fecGates.size()));
    int simulatedPattern = 0;
    cout<<"MAX_FAIL: "<<maxFail<<endl;
-   while(_failTime<maxFail && _fecGrps.size()){
+   while(failTime<maxFail && _fecGrps.size()){
       loadRandSignal();
       for_each_po_simulate();
-      if(!detectFecGrps()) ++_failTime;
+      collectFaninSignal();
+      collectFanoutSignal();
+      if(!detectFecGrps()) ++failTime;
       simulatedPattern+=32;
       cout << "Total #FEC Group = "<<_fecGrps.size()<<'\r';
    }
    cout << endl;
    printPatternSimulated(simulatedPattern);
    updateFecPair();
+   if(_simLog)  writesimLogfile();
 }
 
 void
 CirMgr::fileSim(ifstream& patternFile)
 {
-   _fecGrps.push_back(_fecGates);
+   for(size_t i=0;i<_noSimFlag.size();i++) _noSimFlag[i] = false;
+
    int simulatedPattern = 0;
    vector<string> fileSimLines;
    vector<size_t> filePattern;
+   vector<string> fileSimbackup;
    if(readSimFile(patternFile,fileSimLines)) {   //if no invalid input
+      fileSimbackup = fileSimLines;
       simulatedPattern+=fileSimLines.size();
       while(fileSimLines.size()) {
          packSim2size_t(fileSimLines,filePattern);
          loadSignal(filePattern);
          filePattern.clear();
          for_each_po_simulate();
+         collectFanoutSignal();
          detectFecGrps();
       cout << "Total #FEC Group = "<<_fecGrps.size()<<'\r';
       }
+   if(_simLog) writesimLogfile(fileSimbackup);
    printPatternSimulated(simulatedPattern);
-   updateFecPair();
+   //updateFecPair();
    } else {
       printPatternSimulated(simulatedPattern);
    }
@@ -88,10 +96,50 @@ CirMgr::printPatternSimulated(int numOfPattern) const {
 }
 
 void
-CirMgr::packSim2size_t(vector<string>& rawPatternStr,vector<size_t>& filePattern) {
+CirMgr::writesimLogfile(vector<string>& fileSimLines) {
+   vector<string> fanoutStr;
+   packSize_t2Str(_fanoutSignal,fanoutStr,_poList); 
+   for(int line=0;line<fileSimLines.size();++line) {
+      (*_simLog) << fileSimLines[line]<<" ";
+      (*_simLog) << fanoutStr[line]<<endl;
+   }   
+}
+
+void
+CirMgr::writesimLogfile() {
+   vector<string> faninStr;
+   packSize_t2Str(_faninSignal,faninStr,_piList); 
+   vector<string> fanoutStr;
+   packSize_t2Str(_fanoutSignal,fanoutStr,_poList); 
+   for(int line=0;line<faninStr.size();++line) {
+      (*_simLog) << faninStr[line]<<" ";
+      (*_simLog) << fanoutStr[line]<<endl;
+   }   
+}
+
+void
+CirMgr::packSize_t2Str(vector<size_t>& filePattern,vector<string>& outputStr,
+vector<unsigned>& list)const {
+   vector<string> fileString;
+   string line;
+   int numOfLine = 32*(filePattern.size()/list.size());
+   for(int pat=0;pat<filePattern.size();++pat) {
+      bitset<32> b(filePattern[pat]);
+      fileString.push_back(b.to_string());
+   }
+   for(int l = 0;l<numOfLine;++l) {
+      for(int po=0;po<list.size();++po) {
+         line.push_back(fileString[list.size()*(l/32)+po][31-l%32]);
+      }
+      outputStr.push_back(line);
+      line.clear();
+   }
+}
+
+void
+CirMgr::packSim2size_t(vector<string>& rawPatternStr,vector<size_t>& filePattern) const{
    string packedStr;
    size_t numOfbit = ( rawPatternStr.size()>=32? 32 :rawPatternStr.size() );
-
    for(int pi = 0;pi<_piList.size();++pi) {
       packedStr.clear();
       for(int line=numOfbit-1;line>-1;--line) {
@@ -102,6 +150,21 @@ CirMgr::packSim2size_t(vector<string>& rawPatternStr,vector<size_t>& filePattern
    }
    rawPatternStr.erase(rawPatternStr.end()-numOfbit,rawPatternStr.end());
 }
+
+void
+CirMgr::collectFaninSignal() {
+   for(int i=0;i<_piList.size();++i) {  
+      _faninSignal.push_back(getGate(_piList[i])->getsimValue());
+   }
+}
+
+void
+CirMgr::collectFanoutSignal() {
+   for(int i=0;i<_poList.size();++i) {  
+      _fanoutSignal.push_back(getGate(_poList[i])->getsimValue());
+   }
+}
+
 bool
 CirMgr::readSimFile(ifstream& patternFile,vector<string>& fileSimLines) const
 {
@@ -122,19 +185,22 @@ CirMgr::readSimFile(ifstream& patternFile,vector<string>& fileSimLines) const
    }
    return true;
 }
+
+
 void
 CirMgr::loadSignal(vector<size_t>& signals) {
    for(int pi=0;pi<(int)_piList.size();pi++) {
       ((PiGate*)getGate(_piList[pi])) -> receiveSignal(signals[pi]);
    }
 }
+
 void
 CirMgr::loadRandSignal() {
    for(int pi=0;pi<(int)_piList.size();pi++) {
       ((PiGate*)getGate(_piList[pi])) -> receiveSignal(rnGen(INT_MAX));
    }
-
 }
+
 void
 CirMgr::for_each_po_simulate() {
    for(int i=0;i<(int)_dfsList.size();i++) {
@@ -146,10 +212,12 @@ CirMgr::detectFecGrps() {
    bool failflag = false; //if theres's splitting, set to true
    bool pairflag = false; //set to true if there's any pairs in the loop
    int originalSize = _fecGrps.size();
-      HashMap<SimValue, FecGroup> newFecGrps;
+cout<<_fecGrps.size();
+   int inFailTime = 0;
    for(int gr=0;gr<(int)_fecGrps.size();++gr) {
+      //if(_noSimFlag[gr]>10)   continue;
+      HashMap<SimValue, FecGroup> newFecGrps(100+(_fecGrps[gr].size())/10);
       for(int gt = 0;gt < (int)_fecGrps[gr].size();gt++) {
-         newFecGrps.init(_fecGrps.size());
          FecGroup grp;
          unsigned gate = _fecGrps[gr][gt]/2;
          if( newFecGrps.check( getGate(gate)->getSimValue(),grp )) {
@@ -168,19 +236,23 @@ CirMgr::detectFecGrps() {
          }
       }
       if(newFecGrps.size()==1) { 
+         ++_noSimFlag[gr];
+         ++inFailTime;
          continue; 
       }
       else if(!pairflag){
          _fecGrps.erase(_fecGrps.begin()+gr);
+         _noSimFlag.erase(_noSimFlag.begin()+gr);
          --gr;
       } else {
-         failflag = true;
+        failflag = true;
         pairflag = false;
-       //  CollectValidFecGrp(newFecGrps,gr);
+        CollectValidFecGrp(newFecGrps,gr);
       }
    }
 
-   if(_fecGrps.size() < 2*originalSize) failflag = false;  
+   if(_fecGrps.size() < 2*originalSize || 
+   2*inFailTime > _fecGrps.size()) failflag = false;  
 
    return failflag;
 }
@@ -192,17 +264,20 @@ CirMgr::CollectValidFecGrp(HashMap<SimValue, FecGroup>& newFecGrps,int grpId) {
       if((*it).second.size()>1 && first) {
          _fecGrps[grpId].clear();
          _fecGrps[grpId] = (*it).second;
+         _fecGrps[grpId].assign((*it).second.begin(),(*it).second.end());
+         _noSimFlag[grpId] = 0;
          first = false;
       }
       else if((*it).second.size()>1){ 
          _fecGrps.push_back((*it).second); 
+         _noSimFlag.push_back(0);
       }
-   }   
+   }
 }
 void
 CirMgr::updateFecPair() {
    for(int gr=0;gr<(int)_fecGrps.size();++gr) {
       for(int gt=0;gt<(int)_fecGrps[gr].size();++gt)
-      getGate(_fecGrps[gr][gt]/2)->gateUpdateFecPair(_fecGrps[gr]);
+      getGate(_fecGrps[gr][gt]/2)->gateUpdateFecPair(gr);
    }
 }

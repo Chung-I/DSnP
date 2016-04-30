@@ -63,12 +63,12 @@ CirMgr::fraigMerge(size_t grp,size_t gt) {
    CirGate* toBeMerged = getGate(_fecGrps[grp][gt]/2);
    CirGate* mergeGate = getGate(_fecGrps[grp][0]/2);
    toBeMerged -> cutoffFanInWiring();
-      for(int to=0;to<(int)toBeMerged -> getFanOutSize();to++) {
-      mergeGate -> addFanOutList(toBeMerged -> getFanOutGate(to),(toBeMerged->getFanOutGateV(to)->isInv()!= _fecGrps[grp][gt]%2));
-      toBeMerged -> getFanOutGate(to) -> addFanInList(mergeGate,
-         (toBeMerged->getFanOutGateV(to)->isInv()!=_fecGrps[grp][gt]%2));
-      }
    toBeMerged -> cutoffFanOutWiring();
+      for(int to=0;to<(int)toBeMerged -> getFanOutSize();to++) {
+      bool inverse = (toBeMerged->getFanOutGateV(to)->isInv()!= _fecGrps[grp][gt]%2);
+      mergeGate -> addFanOutList(toBeMerged -> getFanOutGate(to),inverse);
+      toBeMerged -> getFanOutGate(to) -> addFanInList(mergeGate,inverse);
+      }
    eraseGate(toBeMerged);
 }
 void

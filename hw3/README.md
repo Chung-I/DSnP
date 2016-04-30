@@ -1,2 +1,3 @@
-type "make" to compile hw3.
-type "./mydb" to execute hw3 in your terminal.
+Type "make" to compile hw3.
+
+Type "./mydb" to execute hw3 in your terminal.

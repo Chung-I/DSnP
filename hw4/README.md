@@ -1,2 +1,3 @@
-type "make" to compile hw4.
-type "./memTest" to execute hw4 in your terminal.
+Type "make" to compile hw4.
+
+Type "./memTest" to execute hw4 in your terminal.

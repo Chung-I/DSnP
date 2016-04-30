@@ -24,7 +24,7 @@ using namespace std;
 #include "sat.h"
 extern CirMgr *cirMgr;
 enum DFSFunc {
-   DFSAig,
+   DFSGate,
    DFSVisit,
    DFSPrint,
    DFSConstruct
@@ -69,6 +69,8 @@ public:
    void printFECPairs() const;
    void writeAag(ostream&) const;
    void writeGate(ostream&, CirGate*) const;
+   
+   vector<vector<unsigned> >* getFecGrps() const;
 
 private:
    ofstream   *_simLog;
@@ -84,6 +86,9 @@ private:
   bool                _updateDfsListFlag;
   mutable int         dfsNum;
   int                 _maxGateId;
+  vector<int>        _noSimFlag;
+  vector<size_t>      _faninSignal;
+  vector<size_t>      _fanoutSignal;
   int                 _failTime;
     
 
@@ -99,6 +104,7 @@ private:
    void merge(CirGate* ,CirGate*);
    void gateStrash(CirGate* ,HashMap<HashKey, size_t >*);
    bool checkInv(CirGate*,CirGate*);
+   void getGateDfsList(CirGate*&,vector<unsigned>&,vector<unsigned>&,int&) const ;
    
    // Private Member functions about simulation
    void loadSignal(vector<size_t>&);
@@ -109,7 +115,12 @@ private:
    void updateFecPair();
    void printPatternSimulated(int ) const;
    bool readSimFile(ifstream&,vector<string>&) const;
-   void packSim2size_t(vector<string>&,vector<size_t>&);
+   void packSim2size_t(vector<string>&,vector<size_t>&) const;
+   void collectFaninSignal();
+   void collectFanoutSignal();
+   void packSize_t2Str(vector<size_t>&,vector<string>&,vector<unsigned>&) const;
+   void writesimLogfile(vector<string>&); 
+   void writesimLogfile(); 
 
    // Member functions about fraig
    void genProofModel(SatSolver&); 

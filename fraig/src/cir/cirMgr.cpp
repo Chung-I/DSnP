@@ -298,6 +298,8 @@ CirMgr::readCircuit(const string& fileName)
       if(getGate(_dfsList[i])-> getGateType() == AIG)
       _fecGates.push_back(2*_dfsList[i]);
    }
+   _fecGrps.push_back(_fecGates);
+   _noSimFlag.push_back(0);
    for(int i=0;i<MILOA[4];i++) delete [] andGateWiring[i];
    delete [] andGateWiring;
    delete [] MILOA;
@@ -406,18 +408,24 @@ CirMgr::printFECPairs() const
 void
 CirMgr::writeAag(ostream& outfile) const
 {
-   outfile<<"aag "<<_maxGateId<<" "<<_piList.size()<<" 0 "<<_poList.size()<<" "<<_aigList.size()<<endl;
+   int dfsAignum = 0;
+   for(int i=0;i<_dfsList.size();++i) {
+      if(getGate(_dfsList[i])->getGateType()==AIG) ++dfsAignum;
+   }
+   outfile<<"aag "<<_maxGateId<<" "<<_piList.size()<<" 0 "<<_poList.size()<<" "<<dfsAignum<<endl;
    for(int i=0; i< (int)_piList.size(); i++)   outfile<<2*(_piList[i])<<endl;
    for(int i=0; i< (int)_poList.size(); i++)   
    outfile<<(getGate(_poList[i]) -> getFanInGateV(0) -> getWiringId())<<endl;
 
-   for(int i=0; i< (int)_aigList.size(); i++) {
-      outfile<<2*_aigList[i]<<" ";
-      for(int j=0;j<(int) getGate(_aigList[i]) -> getFanInSize();j++) {
-         outfile<<getGate(_aigList[i]) -> getFanInGateV(j)->getWiringId();
-         if(j+1 < (int)getGate(_aigList[i]) -> getFanInSize())   outfile<<" ";
-      }
+   for(int i=0;i< (int)_dfsList.size();++i ) {
+      if(getGate(_dfsList[i])->getGateType()==AIG) {
+         outfile<<2*_dfsList[i]<<" ";
+         for(int j=0;j<(int) getGate(_dfsList[i]) -> getFanInSize();j++) {
+            outfile<<getGate(_dfsList[i]) -> getFanInGateV(j)->getWiringId();
+            if(j+1 < (int)getGate(_dfsList[i]) -> getFanInSize())   outfile<<" ";
+         }
       outfile<<endl;
+      }
    }
    for(int i=0;i<(int)_piList.size();i++) {
       if(!getGate(_piList[i]) -> getGateName().empty()) {
@@ -434,6 +442,55 @@ CirMgr::writeAag(ostream& outfile) const
 void
 CirMgr::writeGate(ostream& outfile, CirGate *g) const
 {
+   resetVisit();
+   int MILOA[5];
+   MILOA[0] = g -> getGateId(); 
+   MILOA[2] = 0;  // no latch
+   MILOA[3] = 1;  // one output
+   vector<unsigned> gatepiList;
+   vector<unsigned> gateaigList;
+   getGateDfsList(g,gatepiList,gateaigList,MILOA[0]); 
+   outfile<<"aag "<<MILOA[0]<<" "<<gatepiList.size()
+   <<" 0 "<<MILOA[3]<<" "<<gateaigList.size()<<endl;
+   for(int i=0; i< (int)gatepiList.size(); i++)   outfile<<2*(_piList[i])<<endl;
+
+   outfile<<2*(g -> getGateId())<<endl; //po 
+
+   for(int i=0;i< (int)gateaigList.size();++i ) {
+      outfile<<2*gateaigList[i]<<" ";
+      for(int j=0;j<(int) getGate(gateaigList[i]) -> getFanInSize();j++) {
+         outfile<<getGate(gateaigList[i]) -> getFanInGateV(j)->getWiringId();
+         if(j+1 < (int)getGate(gateaigList[i]) -> getFanInSize())   outfile<<" ";
+      }
+      outfile<<endl;
+   }
+   for(int i=0;i<(int)gatepiList.size();i++) {
+      if(!getGate(gatepiList[i]) -> getGateName().empty()) {
+         outfile<<"i"<<i<<" "<<getGate(gatepiList[i]) -> getGateName()<<endl;
+      }
+   }
+         outfile<<"o0 "<<g->getGateId()<<endl;
+   
+
+}
+void
+CirMgr::getGateDfsList(CirGate*& thisGate,vector<unsigned>& gatepiList,
+vector<unsigned>& gateaigList,int& maxgateid) const {
+      for(int i=0;i<(int)thisGate -> getFanInSize();++i) {
+         CirGate* fanin = thisGate -> getFanInGate(i);
+         if(fanin -> getTypeStr() == "UNDEF") { 
+            continue;
+         }
+         if(!(fanin -> visited()) )  { 
+            getGateDfsList(fanin,gatepiList,gateaigList,maxgateid);
+         }
+      }
+   if(!thisGate -> visited()) {
+      thisGate -> visitGate();
+     if(thisGate->getGateType()==PI)   gatepiList.push_back(thisGate->getGateId());
+     if(thisGate->getGateType()==AIG)   gateaigList.push_back(thisGate->getGateId());
+     if(maxgateid < thisGate->getGateId())  maxgateid = thisGate->getGateId();
+   }
 }
 
 void
@@ -453,7 +510,7 @@ CirMgr::DFS(CirGate* thisGate,DFSFunc dfsFunc)
       thisGate->swapFanIn();
       }
       
-      for(int i=0;i<(int)thisGate -> getFanInSize();i++) {
+      for(int i=0;i<(int)thisGate -> getFanInSize();++i) {
          CirGate* fanin = thisGate -> getFanInGate(i);
          if(dfsFunc == DFSConstruct && fanin -> getTypeStr() == "UNDEF") { 
             continue;
@@ -464,11 +521,10 @@ CirMgr::DFS(CirGate* thisGate,DFSFunc dfsFunc)
       }
    }
    if(!thisGate -> visited()) {
-      if(dfsFunc == DFSVisit) {thisGate -> visitGate();}
-      else if(dfsFunc == DFSConstruct)  {   
-         thisGate -> visitGate();
+      thisGate -> visitGate();
+      if(dfsFunc == DFSConstruct)  {   
          _dfsList.push_back(thisGate->getGateId());
-      }
+      } 
    }
 }
 
@@ -625,3 +681,6 @@ CirMgr::gateStrash(CirGate* toBeMerged,HashMap<HashKey,size_t >* hash)
    }
    else hash -> forceInsert(k, (size_t)toBeMerged);
 }
+
+vector<vector<unsigned> >*
+CirMgr::getFecGrps() const { return (const_cast<vector<vector<unsigned> >* >(&_fecGrps));}

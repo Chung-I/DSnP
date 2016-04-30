@@ -50,7 +50,7 @@ CirGate::reportGate() const
       <<", "<<"line "<<_lineNo<<setw(37-width)<<"="<<endl;
    cout<<"= FECs:";
    gatePrintFecPair();
-   cout<<setw(41-2*(_FECs.size()))<<"="<<endl;
+   cout<<setw(41-2*( ((*(cirMgr->getFecGrps()))[_grp]).size()))<<"="<<endl;
    cout<<"= Value: "<<this->getSimValueString()<<" ="<<endl;
    cout<<"=================================================="<<endl;
 }
@@ -214,13 +214,14 @@ CirGate::getSimValueString() const {
 
 void
 CirGate::gatePrintFecPair() const {
-   for(int i=0;i<(int)_FECs.size();i++) cout<<" "<<(_FECs[i]%2 ?"!" : "")<<_FECs[i]/2;
+   for(int i=0;i<(int)(*(cirMgr->getFecGrps()))[_grp].size();i++) {
+      if((*(cirMgr->getFecGrps()))[_grp][i]!=getGateId())
+      cout<<" "<<(((*(cirMgr->getFecGrps()))[_grp][i])%2 ?"!" : "")
+      <<((*(cirMgr->getFecGrps()))[_grp][i])/2;
+   }
 }
 
 void
-CirGate::gateUpdateFecPair(FecGroup& grp) {
-   _FECs = grp;
-   for(int i=0;i<(int)_FECs.size();i++) {
-      if((_FECs[i]/2) == getGateId()) { _FECs.erase(_FECs.begin()+i); break; }
-   }
+CirGate::gateUpdateFecPair(size_t grp) {
+   _grp = grp;
 }

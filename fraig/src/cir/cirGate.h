@@ -132,9 +132,9 @@ public:
    string getSimValueString() const;
    size_t getsimValue() const {return _simValue; }
    SimValue getSimValue() const {return _SimValue;}
-   void gateUpdateFecPair(FecGroup&);
+   void gateUpdateFecPair(size_t);
    void gatePrintFecPair() const;
-   FecGroup getFECs() const { return _FECs; };
+   size_t getFECs() const { return _grp; };
    static size_t    _classVisit;
    Var getVar() const { return _var; }
    void setVar(const Var& v) { _var = v; } 
@@ -153,7 +153,7 @@ protected:
    GateV*           _invWiringGate;
    int              _simValue;
    SimValue         _SimValue;
-   FecGroup         _FECs;
+   size_t           _grp; //which fec grp you're in
    Var              _var;
 };
 
@@ -174,6 +174,7 @@ public:
             cout<<" ("<<getGateName()<<")";
       }
    }
+   virtual bool isAig() const { return true; }
    virtual size_t simulate() {
  //     _simValue = 
  //     ((getFanInGateV(0)->isInv()? 0xFFFFFFFF : 0)^
