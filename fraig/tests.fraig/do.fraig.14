@@ -1,4 +1,4 @@
-cirr sim13.aag
+cirr tests.fraig/sim14.aag
 cirp
 cirp -pi
 cirp -po
